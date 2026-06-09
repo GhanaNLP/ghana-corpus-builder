@@ -24,6 +24,64 @@ CSV columns in versions file:  version_id, lang_code, lang_name, abbr  (abbr opt
 Requires: selenium, Chrome + chromedriver.
 """
 
+import sys
+import subprocess
+import os
+
+# ─────────────────────────────────────────────
+# BOOTSTRAP — runs before anything else
+# ─────────────────────────────────────────────
+
+REQUIRED_PACKAGES = [
+    "selenium",
+    "webdriver_manager",
+    "pandas",
+    "datasets",
+    "huggingface_hub",
+]
+
+_CHROME_FLAG = ".chrome_confirmed"
+
+def _check_chrome():
+    """Ask the user once if Chrome is installed. Saves a flag file so it never asks again."""
+    if os.path.exists(_CHROME_FLAG):
+        return
+    answer = input("\n❓  Do you have Google Chrome installed? [y/n]: ").strip().lower()
+    if answer not in ("y", "yes"):
+        print("\n    No worries! Please install Google Chrome from:")
+        print("    https://www.google.com/chrome/")
+        print("    Once installed, come back and run this script again. 😊\n")
+        sys.exit(0)
+    # Save flag so we never ask again
+    with open(_CHROME_FLAG, "w") as f:
+        f.write("chrome confirmed\n")
+
+def _install_packages():
+    """pip-install any package from REQUIRED_PACKAGES that isn't importable."""
+    # Map install name → import name where they differ
+    import_names = {
+        "webdriver_manager": "webdriver_manager",
+        "huggingface_hub":   "huggingface_hub",
+    }
+    missing = []
+    for pkg in REQUIRED_PACKAGES:
+        import_name = import_names.get(pkg, pkg)
+        try:
+            __import__(import_name)
+        except ImportError:
+            missing.append(pkg)
+
+    if missing:
+        print(f"\n📦  Installing missing packages: {', '.join(missing)} …")
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "--quiet"] + missing
+        )
+        print("✅  Packages installed.\n")
+
+_check_chrome()
+_install_packages()
+
+# ── Rest of imports (safe to do after bootstrap) ──────────────────────────────
 import csv
 import json
 import os
@@ -281,12 +339,12 @@ def save_testament_status(status: dict):
 # CSV NAME HELPER
 # ─────────────────────────────────────────────
 
-def lang_csv_name(lang_name: str, lang_code: str) -> str:
-    """e.g. 'Asante Twi' + 'twi' → 'Asante_Twi_twi.csv'"""
-    return f"{lang_name}_{lang_code}".replace(" ", "_").replace("/", "-") + ".csv"
+def lang_csv_name(lang_name: str, lang_code: str, version_num: int) -> str:
+    """e.g. 'Asante Twi' + 'twi' + 1461 → 'Asante_Twi_twi_v1461.csv'"""
+    return f"{lang_name}_{lang_code}_v{version_num}".replace(" ", "_").replace("/", "-") + ".csv"
 
-def lang_csv_path(lang_name: str, lang_code: str) -> str:
-    return os.path.join(OUTPUT_ROOT, lang_csv_name(lang_name, lang_code))
+def lang_csv_path(lang_name: str, lang_code: str, version_num: int) -> str:
+    return os.path.join(OUTPUT_ROOT, lang_csv_name(lang_name, lang_code, version_num))
 
 
 # ─────────────────────────────────────────────
@@ -411,7 +469,7 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
           f"{' / ' + abbr if abbr else ''}")
     print(f"{'='*60}")
 
-    csv_path = lang_csv_path(lang_name, lang_code)
+    csv_path = lang_csv_path(lang_name, lang_code, version_num)
     done_set = set(progress_dict.get(version_num, []))
     stats    = {"parallel": 0, "skipped": 0, "missing": 0}
 
@@ -591,97 +649,41 @@ def get_assigned_version_ids(readme_path: str = "README.md") -> set[int]:
 
 def prompt_language_selection(entries: list) -> list:
     """
-    Display a numbered list of available languages and prompt the user
-    to select one or more. Versions already assigned in README.md
-    (volunteer named or marked Done) are hidden from the list.
-    Supports single picks, comma-separated picks, and ranges (e.g. 1-3).
+    Ask the user to enter a YouVersion version ID directly.
+    Tells them the language they are running once confirmed.
     """
     assigned_ids = get_assigned_version_ids()
+    available    = [(vid, lc, ln, ab) for (vid, lc, ln, ab) in entries if vid not in assigned_ids]
+    available_by_id = {vid: (vid, lc, ln, ab) for (vid, lc, ln, ab) in available}
 
-    skipped = [(vid, lc, ln, ab) for (vid, lc, ln, ab) in entries if vid in assigned_ids]
-    available = [(vid, lc, ln, ab) for (vid, lc, ln, ab) in entries if vid not in assigned_ids]
-
-    print("\n" + "=" * 60)
-    print("  Available Languages  (unassigned)")
-    print("=" * 60)
     if not available:
-        print("  All languages are already assigned in README.md.")
+        print("  All versions are already assigned in README.md.")
         return []
-    print(f"  {'#':<5} {'Language':<30} {'Code':<10} {'Version ID'}")
-    print(f"  {'-'*5} {'-'*30} {'-'*10} {'-'*10}")
-    for i, (version_num, lang_code, lang_name, abbr) in enumerate(available, start=1):
-        abbr_str = f" ({abbr})" if abbr else ""
-        print(f"  {i:<5} {lang_name + abbr_str:<30} {lang_code:<10} {version_num}")
-    print("=" * 60)
-    if skipped:
-        print(f"  ℹ️  {len(skipped)} version(s) hidden — already assigned or done in README.md")
-    entries = available  # selection operates only on the unassigned list
-    print("\n  Enter number(s) to select — examples:")
-    print("    3          → pick language #3")
-    print("    1,4,7      → pick languages #1, #4, and #7")
-    print("    2-5        → pick languages #2 through #5")
-    print("    1,3-5,8    → mixed selection")
-    print()
 
     while True:
-        raw = input("  Your selection: ").strip()
-        if not raw:
-            print("  ⚠️  No input provided. Please enter at least one number.\n")
+        raw = input("\n  Enter your version ID (or 'q' to quit): ").strip()
+        if raw.lower() in ("q", "quit", "exit"):
+            print("\n  Bye! 👋\n")
+            sys.exit(0)
+        if not raw.isdigit():
+            print("  ⚠️  Please enter a numeric version ID, or 'q' to quit.\n")
             continue
 
-        selected_indices = set()
-        valid = True
-        parts = [p.strip() for p in raw.split(",")]
-        for part in parts:
-            if not part:
-                continue
-            if "-" in part:
-                # Range like "2-5"
-                bounds = part.split("-", 1)
-                try:
-                    lo, hi = int(bounds[0].strip()), int(bounds[1].strip())
-                    if lo < 1 or hi > len(entries) or lo > hi:
-                        print(f"  ⚠️  Range '{part}' is out of bounds "
-                              f"(valid: 1–{len(entries)}).\n")
-                        valid = False
-                        break
-                    selected_indices.update(range(lo, hi + 1))
-                except ValueError:
-                    print(f"  ⚠️  Could not parse range '{part}'.\n")
-                    valid = False
-                    break
-            else:
-                try:
-                    n = int(part)
-                    if n < 1 or n > len(entries):
-                        print(f"  ⚠️  Number {n} is out of range "
-                              f"(valid: 1–{len(entries)}).\n")
-                        valid = False
-                        break
-                    selected_indices.add(n)
-                except ValueError:
-                    print(f"  ⚠️  '{part}' is not a valid number.\n")
-                    valid = False
-                    break
+        vid = int(raw)
 
-        if not valid or not selected_indices:
-            if valid:
-                print("  ⚠️  No valid selections found. Please try again.\n")
+        if vid in assigned_ids:
+            print(f"  ⚠️  Version {vid} is already assigned or marked done in README.md.\n")
             continue
 
-        # Show confirmation summary
-        chosen = [entries[i - 1] for i in sorted(selected_indices)]
-        print("\n  You selected:")
-        for version_num, lang_code, lang_name, abbr in chosen:
-            abbr_str = f" ({abbr})" if abbr else ""
-            print(f"    • {lang_name}{abbr_str}  [{lang_code}]  version {version_num}")
-        print()
+        if vid not in available_by_id:
+            print(f"  ⚠️  Version {vid} was not found in the versions CSV.\n")
+            continue
 
-        confirm = input("  Confirm? [y/n]: ").strip().lower()
-        if confirm in ("y", "yes"):
-            return chosen
-        else:
-            print("\n  Selection cancelled — please choose again.\n")
+        entry = available_by_id[vid]
+        _, lang_code, lang_name, abbr = entry
+        abbr_str = f" ({abbr})" if abbr else ""
+        print(f"\n  ✅  Starting scrape for {lang_name}{abbr_str} [{lang_code}]...\n")
+        return [entry]
 
 
 # ─────────────────────────────────────────────

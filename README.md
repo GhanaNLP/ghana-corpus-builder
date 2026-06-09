@@ -1,6 +1,4 @@
-# Ghana MT Parallel Corpus
-
-**Ghana Machine Translation Parallel Corpus**
+# Ghana Machine Translation Parallel Corpus Builder
 
 A toolkit for building parallel text datasets from Ghanaian Bible translations on [YouVersion](https://www.bible.com). It automatically pairs local-language Bible verses with their English equivalents and saves the results as clean CSVs ready for machine translation training and NLP research.
 
@@ -12,121 +10,33 @@ YouVersion hosts hundreds of Bible translations, including many Ghanaian languag
 
 This project scrapes those verse pairs, cleans the text, and saves them as structured CSV files. The end result is a collection of sentence-level `(local language, English)` pairs that can be used directly to train or fine-tune machine translation models.
 
-### What happens when you run it
-
-1. A pool of Chrome browsers opens (in the background) and works through every book and chapter of the Bible in parallel.
-2. For each verse, the scraper fetches the local-language text and the English reference text (CEB version).
-3. If both sides are present, the pair is saved. If either side is missing, the verse is skipped.
-4. English verses are cached so they are only fetched once across all languages.
-5. Progress is saved after every chapter so a run can be interrupted and resumed without losing work.
-
-### Output files
-
-Everything is written to `bible_parallel_text_datasets/`:
-
-```
-bible_parallel_text_datasets/
-    english_cache.csv        verse_key, eng
-    Asante_Twi_twi.csv       verse_key, version_id, eng, local
-    Ewe_ee.csv
-    Ga_gaa.csv
-    progress.json
-    testament_status.json
-```
-
-One CSV per language, named `{Language_Name}_{lang_code}.csv`. The English cache is shared across all languages so it is only built once.
-
-Each language CSV has four columns:
-
-| Column | Description |
-|---|---|
-| `verse_key` | Bible reference, e.g. `GEN.1.1` |
-| `version_id` | YouVersion version number |
-| `eng` | Cleaned English verse text |
-| `local` | Cleaned local-language verse text |
-
----
-
 ## Quick start
 
 ### Requirements
 
 - Python 3.10 or later
 - Google Chrome installed
-- A `youversion_ghana_versions.csv` file listing the versions to scrape (see format below)
 
-### Install dependencies
-
-```bash
-pip install selenium webdriver-manager pandas datasets huggingface_hub
-```
+> All Python dependencies are installed automatically on first run. You do not need to run `pip install` yourself.
 
 ### Clone and run
 
 ```bash
-git clone https://github.com/ghananlpcommunity/Ghana-MT-PC.git
-cd Ghana-MT-PC
-```
-
-Create your versions file (see format below), then run the scraper:
-
-```bash
+git clone https://github.com/ghananlpcommunity/ghana-mt-builder.git
+cd ghana-mt-builder
 python youversion_parallel_text_builder.py
 ```
 
-Once scraping is done, merge and push to HuggingFace:
-
-```bash
-python build_and_push_parallel_dataset.py
-```
-
-### Versions file format
-
-The scraper reads a CSV called `youversion_ghana_versions.csv`. Each row is one Bible version to scrape. You can find version IDs in YouVersion URLs — for example `https://www.bible.com/bible/1461/GEN.1.1` has version ID `1461`.
-
-```csv
-version_id,lang_code,lang_name,abbr
-1461,twi,Asante Twi,ASCMB
-1861,twi,Asante Twi,TWI
-2708,ee,Ewe,NEGAB
-3625,gaa,Ga,GAAGB
-```
-
-`abbr` is the version abbreviation used in YouVersion URLs. It is optional but recommended — some versions require it to load correctly.
-
-### Tuning the scraper
-
-At the top of `youversion_parallel_text_builder.py` there are a few settings worth knowing about:
-
-```python
-NUM_WORKERS = 8      # number of parallel Chrome browsers
-                     # lower this if you hit rate limits or run out of RAM
-
-HEADLESS = True      # set False to watch the browsers while debugging
-
-OUTPUT_ROOT = "./bible_parallel_text_datasets"  # where CSVs are written
-```
+The script will:
+1. Ask you to confirm you have Chrome installed, as this is required for the scraping to work.
+2. Install any required packages in the background
+3. Prompt you for a version ID - This is the version ID you received from Ghana NLP after accepting to participate in this project.
 
 ### Resuming an interrupted run
 
-The scraper tracks progress in `bible_parallel_text_datasets/progress.json`. If a run is interrupted for any reason, just run the same command again — already-completed chapters are skipped automatically.
+The scraper tracks progress in `bible_parallel_text_datasets/progress.json`. If a run is interrupted for any reason, just run the same command again and select the same version ID — already-completed chapters are skipped automatically.
 
-### Pushing to HuggingFace
-
-Edit the config block at the top of `build_and_push_parallel_dataset.py`:
-
-```python
-LANG_CSV     = "Asante_Twi_twi"   # CSV name without .csv, or None for all languages
-EXISTING_CSV = Path("...")         # path to any existing parallel sentences to merge in
-HF_TOKEN     = "hf_..."           # your HuggingFace write token
-HF_REPO_ID   = "your-org/your-dataset-name"
-```
-
-Then run:
-
-```bash
-python build_and_push_parallel_dataset.py
-```
+> `progress.json` and `testament_status.json` are listed in `.gitignore` and will not be committed to the repository.
 
 ---
 
