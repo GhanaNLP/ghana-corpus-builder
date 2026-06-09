@@ -46,12 +46,12 @@ The table below lists all languages confirmed to have content on YouVersion and 
 
 | Language | Code | Version IDs | Coverage | Volunteer | Status |
 |---|---|---|---|---|---|
-| Akuapem Twi | twi | 1631, 3439, 3440 | OT + NT | — | Not started |
+| Akuapem Twi | twi | 1631, 3439, 3440 | OT + NT | [Jonathan Asiamah](https://www.linkedin.com/in/jonathan-asiamah-4639a5147/) | Assigned |
 | Asante Twi | twi | 1461, 1861, 2094 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Bassar Ntcham | bud | 2235 | OT + NT | — | Not started |
+| Bassar Ntcham | bud | 2235 | OT + NT | [Kenneth Dotse](https://www.linkedin.com/in/kenneth-kwame-dotse/) | Assigned |
 | Bimoba | bim | 1748 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Buli | bwu | 2176 | OT + NT | — | Not started |
-| Dagaare | dga | 4573 | OT + NT | — | Not started |
+| Buli | bwu | 2176 | OT + NT | [Dyllis	Ofori-Attah](https://www.linkedin.com/in/dyllis-oforiattah/) | Assigned |
+| Dagaare | dga | 4573 | OT + NT | [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) | Not started |
 | Dagbani | dag | 2263, 2264 | OT + NT | — | Not started |
 | Dangme | ada | 2265 | OT + NT | — | Not started |
 | Deg | mzw | 2012 | OT + NT | — | Not started |
