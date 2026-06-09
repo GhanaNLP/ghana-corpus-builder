@@ -60,15 +60,15 @@ Each language CSV has four columns:
 ### Clone and run
 
 ```bash
-git clone https://github.com/ghananlpcommunity/Ghana-MT-PC.git
-cd Ghana-MT-PC
+git clone https://github.com/ghananlpcommunity/ghana-mt-builder.git
+cd ghana-mt-builder
 python youversion_parallel_text_builder.py
 ```
 
 The script will:
-1. Ask you to confirm you have Chrome installed
-2. Install any missing packages automatically
-3. Show the available versions table and prompt you for a version ID
+1. Ask you to confirm you have Chrome installed, as this is required for the scraping to work.
+2. Install any required packages in the background
+3. Prompt you for a version ID - This is the version ID you received from Ghana NLP after accepting to participate in this project.
 
 Once scraping is done, merge and push to HuggingFace:
 
