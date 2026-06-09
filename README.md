@@ -10,44 +10,6 @@ YouVersion hosts hundreds of Bible translations, including many Ghanaian languag
 
 This project scrapes those verse pairs, cleans the text, and saves them as structured CSV files. The end result is a collection of sentence-level `(local language, English)` pairs that can be used directly to train or fine-tune machine translation models.
 
-### What happens when you run it
-
-1. The script checks that you have Google Chrome installed and auto-installs any missing Python dependencies.
-2. It shows you a table of all unassigned language versions and asks you to enter a version ID.
-3. A pool of Chrome browsers opens (in the background) and works through every book and chapter of the Bible in parallel.
-4. For each verse, the scraper fetches the local-language text and the English reference text (CEB version).
-5. If both sides are present, the pair is saved. If either side is missing, the verse is skipped.
-6. English verses are cached so they are only fetched once across all languages.
-7. Progress is saved after every chapter so a run can be interrupted and resumed without losing work.
-
-### Output files
-
-Everything is written to `bible_parallel_text_datasets/`:
-
-```
-bible_parallel_text_datasets/
-    english_cache.csv            verse_key, eng
-    Asante_Twi_twi_v1461.csv    verse_key, version_id, eng, local
-    Asante_Twi_twi_v1861.csv
-    Ga_gaa_v2708.csv
-    Ewe_ewe_v1613.csv
-    progress.json
-    testament_status.json
-```
-
-One CSV per **version**, named `{Language_Name}_{lang_code}_v{version_id}.csv`. This means two versions of the same language produce two separate files. The English cache is shared across all runs so it is only built once.
-
-Each language CSV has four columns:
-
-| Column | Description |
-|---|---|
-| `verse_key` | Bible reference, e.g. `GEN.1.1` |
-| `version_id` | YouVersion version number |
-| `eng` | Cleaned English verse text |
-| `local` | Cleaned local-language verse text |
-
----
-
 ## Quick start
 
 ### Requirements
