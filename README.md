@@ -70,95 +70,11 @@ The script will:
 2. Install any required packages in the background
 3. Prompt you for a version ID - This is the version ID you received from Ghana NLP after accepting to participate in this project.
 
-Once scraping is done, merge and push to HuggingFace:
-
-```bash
-python build_and_push_parallel_dataset.py
-```
-
-### Versions file format
-
-The scraper reads a CSV called `youversion_ghana_versions.csv`. Each row is one Bible version to scrape. You can find version IDs in YouVersion URLs — for example `https://www.bible.com/bible/1461/GEN.1.1` has version ID `1461`.
-
-```csv
-version_id,lang_code,lang_name,abbr
-1461,twi,Asante Twi,ASCMB
-1861,twi,Asante Twi,TWI
-2708,gaa,Ga,GAAGB
-1613,ewe,Ewe,EWE
-```
-
-`abbr` is the version abbreviation used in YouVersion URLs. It is optional but recommended — some versions require it to load correctly.
-
-### Selecting a version to scrape
-
-When you run the script you will see a table like this:
-
-```
-============================================================
-  Available versions  (unassigned)
-============================================================
-  Version ID   Language                       Code
-  ------------ ------------------------------ ----------
-  2263         Dagbani                        dag
-  2264         Dagbani                        dag
-  2708         Ga (GAAGB)                     gaa
-  1613         Ewe                            ewe
-  ...
-============================================================
-  ℹ️  5 version(s) not shown — already assigned or done in README.md
-
-  (type a version ID from the table above, or 'q' to quit)
-
-  Enter a version ID to run (or 'q' to quit):
-```
-
-Type the version ID you want to scrape and press Enter. The script will confirm the language name before starting:
-
-```
-  Enter a version ID to run (or 'q' to quit): 2708
-
-  ✅  Version 2708 → Ga (GAAGB) [gaa]
-  Go ahead with this version? [y/n]:
-```
-
-Versions already assigned to a volunteer or marked Done in the README are hidden from the table automatically. Type `q` at any time to quit without running.
-
-### Tuning the scraper
-
-At the top of `youversion_parallel_text_builder.py` there are a few settings worth knowing about:
-
-```python
-NUM_WORKERS = 8      # number of parallel Chrome browsers
-                     # lower this if you hit rate limits or run out of RAM
-
-HEADLESS = True      # set False to watch the browsers while debugging
-
-OUTPUT_ROOT = "./bible_parallel_text_datasets"  # where CSVs are written
-```
-
 ### Resuming an interrupted run
 
 The scraper tracks progress in `bible_parallel_text_datasets/progress.json`. If a run is interrupted for any reason, just run the same command again and select the same version ID — already-completed chapters are skipped automatically.
 
 > `progress.json` and `testament_status.json` are listed in `.gitignore` and will not be committed to the repository.
-
-### Pushing to HuggingFace
-
-Edit the config block at the top of `build_and_push_parallel_dataset.py`:
-
-```python
-LANG_CSV     = "Ga_gaa_v2708"     # CSV name without .csv, or None for all
-EXISTING_CSV = Path("...")         # path to any existing parallel sentences to merge in
-HF_TOKEN     = "hf_..."           # your HuggingFace write token
-HF_REPO_ID   = "your-org/your-dataset-name"
-```
-
-Then run:
-
-```bash
-python build_and_push_parallel_dataset.py
-```
 
 ---
 
