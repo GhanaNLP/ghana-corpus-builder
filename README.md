@@ -1,4 +1,4 @@
-# Ghana MT Parallel Corpus
+# Ghana MT Parallel Corpus Builder
 
 **Ghana Machine Translation Parallel Corpus**
 
