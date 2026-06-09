@@ -1,6 +1,4 @@
-# Ghana MT Parallel Corpus Builder
-
-**Ghana Machine Translation Parallel Corpus**
+# Ghana Machine Translation Parallel Corpus Builder
 
 A toolkit for building parallel text datasets from Ghanaian Bible translations on [YouVersion](https://www.bible.com). It automatically pairs local-language Bible verses with their English equivalents and saves the results as clean CSVs ready for machine translation training and NLP research.
 
