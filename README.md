@@ -1,4 +1,4 @@
-# Ghana-MT-PC
+# Ghana MT Parallel Corpus
 
 **Ghana Machine Translation Parallel Corpus**
 
