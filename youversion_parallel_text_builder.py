@@ -26,6 +26,7 @@ Requires: selenium, Chrome + chromedriver.
 
 import sys
 import subprocess
+import os
 
 # ─────────────────────────────────────────────
 # BOOTSTRAP — runs before anything else
@@ -39,14 +40,21 @@ REQUIRED_PACKAGES = [
     "huggingface_hub",
 ]
 
+_CHROME_FLAG = ".chrome_confirmed"
+
 def _check_chrome():
-    """Ask the user to confirm Chrome is installed before continuing."""
+    """Ask the user once if Chrome is installed. Saves a flag file so it never asks again."""
+    if os.path.exists(_CHROME_FLAG):
+        return
     answer = input("\n❓  Do you have Google Chrome installed? [y/n]: ").strip().lower()
     if answer not in ("y", "yes"):
         print("\n    No worries! Please install Google Chrome from:")
         print("    https://www.google.com/chrome/")
         print("    Once installed, come back and run this script again. 😊\n")
         sys.exit(0)
+    # Save flag so we never ask again
+    with open(_CHROME_FLAG, "w") as f:
+        f.write("chrome confirmed\n")
 
 def _install_packages():
     """pip-install any package from REQUIRED_PACKAGES that isn't importable."""
@@ -641,36 +649,19 @@ def get_assigned_version_ids(readme_path: str = "README.md") -> set[int]:
 
 def prompt_language_selection(entries: list) -> list:
     """
-    Ask the user to enter a YouVersion version ID. Validates it against the
-    unassigned entries and confirms the matched language before proceeding.
+    Ask the user to enter a YouVersion version ID directly.
+    Tells them the language they are running once confirmed.
     """
     assigned_ids = get_assigned_version_ids()
     available    = [(vid, lc, ln, ab) for (vid, lc, ln, ab) in entries if vid not in assigned_ids]
     available_by_id = {vid: (vid, lc, ln, ab) for (vid, lc, ln, ab) in available}
 
-    skipped_count = len(entries) - len(available)
-
-    print("\n" + "=" * 60)
-    print("  Available versions  (unassigned)")
-    print("=" * 60)
     if not available:
         print("  All versions are already assigned in README.md.")
         return []
-    print(f"  {'Version ID':<12} {'Language':<30} {'Code'}")
-    print(f"  {'-'*12} {'-'*30} {'-'*10}")
-    for vid, lc, ln, ab in available:
-        abbr_str = f" ({ab})" if ab else ""
-        print(f"  {vid:<12} {ln + abbr_str:<30} {lc}")
-    print("=" * 60)
-    if skipped_count:
-        print(f"  ℹ️  {skipped_count} version(s) not shown — already assigned or done in README.md")
-    print()
-
-    print("  (type a version ID from the table above, or 'q' to quit)")
-    print()
 
     while True:
-        raw = input("  Enter a version ID to run (or 'q' to quit): ").strip()
+        raw = input("\n  Enter your version ID (or 'q' to quit): ").strip()
         if raw.lower() in ("q", "quit", "exit"):
             print("\n  Bye! 👋\n")
             sys.exit(0)
@@ -691,12 +682,8 @@ def prompt_language_selection(entries: list) -> list:
         entry = available_by_id[vid]
         _, lang_code, lang_name, abbr = entry
         abbr_str = f" ({abbr})" if abbr else ""
-        print(f"\n  ✅  Version {vid} → {lang_name}{abbr_str} [{lang_code}]")
-        confirm = input("  Go ahead with this version? [y/n]: ").strip().lower()
-        if confirm in ("y", "yes"):
-            return [entry]
-        else:
-            print("\n  OK, please enter a different version ID.\n")
+        print(f"\n  ✅  Starting scrape for {lang_name}{abbr_str} [{lang_code}]...\n")
+        return [entry]
 
 
 # ─────────────────────────────────────────────
