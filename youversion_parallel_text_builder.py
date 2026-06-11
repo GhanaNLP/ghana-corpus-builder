@@ -1,27 +1,29 @@
 """
 YouVersion Bible Parallel Text Dataset Builder  (English ↔ Local language)
 ===========================================================================
-Scrapes VERSE-level text for each Bible version and writes only PARALLEL pairs
-where BOTH the English verse and the local-language verse are present.
+HTTP-only version — uses requests + BeautifulSoup instead of Selenium/Chrome.
+
+No Chrome required. Each worker is a lightweight requests.Session (~1 MB)
+instead of a browser instance (~400 MB), so you can safely run 20-30
+parallel workers on a normal laptop.
+
+Works because bible.com (Next.js) server-side renders verse content into
+the initial HTML response — no JavaScript execution needed.
+
+If you ever see 0 pairs and lots of "empty" results, the site may have
+switched to client-side rendering for your IP/region; in that case fall
+back to youversion_parallel_text_builder.py (Selenium).
 
 OUTPUT LAYOUT
 -------------
-    {OUTPUT_ROOT}/                        ← "bob_dataset" or whatever you name it
+    {OUTPUT_ROOT}/
         progress.json
         testament_status.json
-        english_cache.csv                 ← shared English verse cache (verse_key, eng)
-        {LANG_NAME}_{LANG_CODE}.csv       ← one CSV per language  (verse_key, version_id, eng, local)
-
-CSV naming example:  Asante_Twi_twi.csv,  Ewe_ee.csv,  Ga_gaa.csv …
-
-PARALLELISM
------------
-Parallel at the CHAPTER level across a pool of Chrome browsers (NUM_WORKERS).
-Each worker borrows one driver from the queue for a full chapter, then returns it.
-Progress is flushed once per finished chapter (resume-safe).
+        english_cache.csv
+        {LANG_NAME}_{LANG_CODE}_v{VERSION_ID}.csv
 
 CSV columns in versions file:  version_id, lang_code, lang_name, abbr  (abbr optional)
-Requires: selenium, Chrome + chromedriver.
+Requires: requests, beautifulsoup4, lxml
 """
 
 import sys
@@ -29,39 +31,22 @@ import subprocess
 import os
 
 # ─────────────────────────────────────────────
-# BOOTSTRAP — runs before anything else
+# BOOTSTRAP
 # ─────────────────────────────────────────────
 
 REQUIRED_PACKAGES = [
-    "selenium",
-    "webdriver_manager",
+    "requests",
+    "beautifulsoup4",
+    "lxml",
     "pandas",
     "datasets",
     "huggingface_hub",
 ]
 
-_CHROME_FLAG = ".chrome_confirmed"
-
-def _check_chrome():
-    """Ask the user once if Chrome is installed. Saves a flag file so it never asks again."""
-    if os.path.exists(_CHROME_FLAG):
-        return
-    answer = input("\n❓  Do you have Google Chrome installed? [y/n]: ").strip().lower()
-    if answer not in ("y", "yes"):
-        print("\n    No worries! Please install Google Chrome from:")
-        print("    https://www.google.com/chrome/")
-        print("    Once installed, come back and run this script again. 😊\n")
-        sys.exit(0)
-    # Save flag so we never ask again
-    with open(_CHROME_FLAG, "w") as f:
-        f.write("chrome confirmed\n")
-
 def _install_packages():
-    """pip-install any package from REQUIRED_PACKAGES that isn't importable."""
-    # Map install name → import name where they differ
     import_names = {
-        "webdriver_manager": "webdriver_manager",
-        "huggingface_hub":   "huggingface_hub",
+        "beautifulsoup4": "bs4",
+        "huggingface_hub": "huggingface_hub",
     }
     missing = []
     for pkg in REQUIRED_PACKAGES:
@@ -70,50 +55,59 @@ def _install_packages():
             __import__(import_name)
         except ImportError:
             missing.append(pkg)
-
     if missing:
-        print(f"\n📦  Installing missing packages: {', '.join(missing)} …")
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "--quiet"] + missing
-        )
-        print("✅  Packages installed.\n")
+        print(f"\n  Installing missing packages: {', '.join(missing)} ...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet"] + missing)
+        print("  Packages installed.\n")
 
-_check_chrome()
 _install_packages()
 
-# ── Rest of imports (safe to do after bootstrap) ──────────────────────────────
+# ── Imports ───────────────────────────────────────────────────────────────────
 import csv
 import json
-import os
 import re
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from queue import Queue
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+import requests
+from bs4 import BeautifulSoup
+
 
 # ─────────────────────────────────────────────
-# CONFIG — edit these
+# CONFIG
 # ─────────────────────────────────────────────
 
 VERSIONS_CSV = "youversion_ghana_versions.csv"
 
-# Fixed English reference version  https://www.bible.com/bible/37/GEN.1.1.CEB
 ENGLISH_VERSION_NUM = 37
 ENGLISH_ABBR        = "CEB"
 
-VERSE_SELECTOR = "p.text-17"   # CSS selector used for BOTH English and local pages
+VERSE_SELECTOR = "p.text-17"
 
-# Number of parallel Chrome workers. Each is ~300–500 MB RAM.
-# Keep modest to avoid rate-limiting / IP blocks from bible.com.
-NUM_WORKERS = 8
+# More workers are fine — sessions are ~1 MB, not ~400 MB like browsers.
+# Stay moderate to avoid rate-limiting from bible.com.
+NUM_WORKERS = 16
+
+# Polite delay between requests per worker (seconds).
+REQUEST_DELAY = 0.4
+
+REQUEST_TIMEOUT = 12   # seconds per HTTP request
+MAX_RETRIES     = 3
+RETRY_WAIT      = 3
+
+# Fake a real browser so the server returns normal HTML
+REQUEST_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (X11; Linux x86_64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+}
 
 ALL_BOOK_CODES = [
     "GEN","EXO","LEV","NUM","DEU","JOS","JDG","RUT","1SA","2SA",
@@ -141,29 +135,18 @@ BOOK_CHAPTERS = {
 OUTPUT_ROOT           = "./bible_parallel_text_datasets"
 PROGRESS_FILE         = os.path.join(OUTPUT_ROOT, "progress.json")
 TESTAMENT_STATUS_FILE = os.path.join(OUTPUT_ROOT, "testament_status.json")
-
-# Shared English cache — one CSV in the root, not per-language folders
 ENGLISH_CACHE_CSV     = os.path.join(OUTPUT_ROOT, "english_cache.csv")
 
-# CSV columns for language output files
 CSV_FIELDNAMES = ["verse_key", "version_id", "eng", "local"]
-
-HEADLESS = True
-PAGE_WAIT = 1
-RETRY_WAIT = 2
-MAX_RETRIES = 2
 
 STOP_AFTER_EMPTY_VERSES = 2
 MAX_VERSES_PER_CHAPTER  = 200
-
-EN_MISSING_SUFFIX  = "_missing"   # key suffix stored in memory to mark absent verses
-CHAPTER_DONE_SUFFIX = ".__done__"
+CHAPTER_DONE_SUFFIX     = ".__done__"
 
 # ── Locks ─────────────────────────────────────────────────────────────────────
 PROG_LOCK    = threading.Lock()
-EN_CSV_LOCK  = threading.Lock()   # guards english_cache.csv
+EN_CSV_LOCK  = threading.Lock()
 
-# Per-language CSV locks: created on first use
 _CSV_LOCKS:      dict[str, threading.Lock] = {}
 _CSV_LOCKS_META = threading.Lock()
 
@@ -175,7 +158,7 @@ def get_lang_csv_lock(csv_name: str) -> threading.Lock:
 
 
 # ─────────────────────────────────────────────
-# TEXT CLEANING
+# TEXT CLEANING  (unchanged from Selenium version)
 # ─────────────────────────────────────────────
 
 def clean_text(text: str) -> str:
@@ -200,11 +183,10 @@ def clean_text(text: str) -> str:
 
 
 # ─────────────────────────────────────────────
-# ENGLISH CACHE  (CSV-backed, shared across all languages)
+# ENGLISH CACHE
 # ─────────────────────────────────────────────
 
-# In-memory mirror so we don't re-read the CSV on every verse
-_en_cache: dict[str, str] = {}        # verse_key → cleaned text  (empty string = missing)
+_en_cache: dict[str, str] = {}
 _en_cache_loaded = False
 _en_cache_lock   = threading.Lock()
 
@@ -220,7 +202,6 @@ def _load_en_cache_once():
         _en_cache_loaded = True
 
 def _append_en_cache_row(verse_key: str, eng: str):
-    """Append one row to english_cache.csv and update in-memory dict."""
     with EN_CSV_LOCK:
         os.makedirs(OUTPUT_ROOT, exist_ok=True)
         write_header = not os.path.exists(ENGLISH_CACHE_CSV)
@@ -233,20 +214,21 @@ def _append_en_cache_row(verse_key: str, eng: str):
 
 
 # ─────────────────────────────────────────────
-# VERSE SCRAPING
+# HTTP VERSE FETCHING  (replaces Selenium driver calls)
 # ─────────────────────────────────────────────
 
-def get_verse_text(driver, wait, version_num: int, book: str, chapter: int,
-                   verse: int, abbr: str | None = None) -> str | None:
+def get_verse_text(session: requests.Session, version_num: int, book: str,
+                   chapter: int, verse: int, abbr: str | None = None) -> str | None:
     suffix = f".{abbr}" if abbr else ""
     url = f"https://www.bible.com/bible/{version_num}/{book}.{chapter}.{verse}{suffix}"
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            driver.get(url)
-            time.sleep(PAGE_WAIT)
-            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, VERSE_SELECTOR)))
-            paras = driver.find_elements(By.CSS_SELECTOR, VERSE_SELECTOR)
-            texts = [p.text.strip() for p in paras if p.text.strip()]
+            time.sleep(REQUEST_DELAY)
+            resp = session.get(url, headers=REQUEST_HEADERS, timeout=REQUEST_TIMEOUT)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "lxml")
+            paras = soup.select(VERSE_SELECTOR)
+            texts = [p.get_text(separator=" ", strip=True) for p in paras if p.get_text(strip=True)]
             if texts:
                 return "\n".join(texts)
             return None
@@ -258,17 +240,13 @@ def get_verse_text(driver, wait, version_num: int, book: str, chapter: int,
     return None
 
 
-def get_english_verse(driver, wait, book: str, chapter: int, verse: int) -> str | None:
-    """Return cleaned English text for a verse, using CSV cache. Scrapes on first miss."""
+def get_english_verse(session: requests.Session, book: str, chapter: int, verse: int) -> str | None:
     _load_en_cache_once()
     key = f"{book}.{chapter}.{verse}"
-
     with _en_cache_lock:
         if key in _en_cache:
-            return _en_cache[key] or None  # empty string → was missing
-
-    # Not in cache yet — scrape
-    raw     = get_verse_text(driver, wait, ENGLISH_VERSION_NUM, book, chapter, verse, ENGLISH_ABBR)
+            return _en_cache[key] or None
+    raw     = get_verse_text(session, ENGLISH_VERSION_NUM, book, chapter, verse, ENGLISH_ABBR)
     cleaned = clean_text(raw) if raw and raw.strip() else ""
     _append_en_cache_row(key, cleaned)
     return cleaned or None
@@ -286,7 +264,6 @@ def load_global_progress() -> dict:
     return {}
 
 def save_global_progress_locked(progress: dict):
-    """Caller must hold PROG_LOCK."""
     os.makedirs(OUTPUT_ROOT, exist_ok=True)
     out = {str(k): v for k, v in progress.items()}
     tmp = PROGRESS_FILE + ".tmp"
@@ -336,20 +313,14 @@ def save_testament_status(status: dict):
 
 
 # ─────────────────────────────────────────────
-# CSV NAME HELPER
+# CSV HELPERS
 # ─────────────────────────────────────────────
 
 def lang_csv_name(lang_name: str, lang_code: str, version_num: int) -> str:
-    """e.g. 'Asante Twi' + 'twi' + 1461 → 'Asante_Twi_twi_v1461.csv'"""
     return f"{lang_name}_{lang_code}_v{version_num}".replace(" ", "_").replace("/", "-") + ".csv"
 
 def lang_csv_path(lang_name: str, lang_code: str, version_num: int) -> str:
     return os.path.join(OUTPUT_ROOT, lang_csv_name(lang_name, lang_code, version_num))
-
-
-# ─────────────────────────────────────────────
-# SAVE A PARALLEL PAIR  →  language CSV
-# ─────────────────────────────────────────────
 
 def save_parallel_pair(key: str, version_num: int, en_text: str,
                        local_text: str, csv_path: str) -> bool:
@@ -374,17 +345,16 @@ def save_parallel_pair(key: str, version_num: int, en_text: str,
 # VERSE HANDLER
 # ─────────────────────────────────────────────
 
-def try_save_verse(book, chapter, verse, version_num, driver, wait, abbr,
+def try_save_verse(book, chapter, verse, version_num, session, abbr,
                    csv_path, progress_dict, done_set, stats) -> str:
-    """Returns 'pair' | 'missing' | 'empty'."""
     key = f"{book}.{chapter}.{verse}"
 
-    raw_local  = get_verse_text(driver, wait, version_num, book, chapter, verse, abbr)
+    raw_local  = get_verse_text(session, version_num, book, chapter, verse, abbr)
     local_text = clean_text(raw_local) if raw_local else ""
     if not local_text:
         return "empty"
 
-    en_text = get_english_verse(driver, wait, book, chapter, verse)
+    en_text = get_english_verse(session, book, chapter, verse)
     if not en_text:
         mark_verse_done(version_num, key, progress_dict, done_set)
         stats["missing"] += 1
@@ -393,18 +363,18 @@ def try_save_verse(book, chapter, verse, version_num, driver, wait, abbr,
     save_parallel_pair(key, version_num, en_text, local_text, csv_path)
     mark_verse_done(version_num, key, progress_dict, done_set)
     stats["parallel"] += 1
-    print(f"    ✅ {key}")
+    print(f"    + {key}")
     return "pair"
 
 
 # ─────────────────────────────────────────────
-# CHAPTER WORKER
+# CHAPTER WORKER  (uses a session from the pool instead of a browser)
 # ─────────────────────────────────────────────
 
 def process_chapter(book, chapter, version_num, abbr, csv_path,
-                    progress_dict, done_set, driver_queue):
+                    progress_dict, done_set, session_queue: Queue):
     stats = {"parallel": 0, "skipped": 0, "missing": 0}
-    driver, wait     = driver_queue.get()
+    session = session_queue.get()
     chapter_finished = False
     try:
         consecutive_empty = 0
@@ -414,8 +384,8 @@ def process_chapter(book, chapter, version_num, abbr, csv_path,
                 stats["skipped"] += 1
                 consecutive_empty = 0
                 continue
-            result = try_save_verse(book, chapter, verse, version_num, driver,
-                                    wait, abbr, csv_path, progress_dict, done_set, stats)
+            result = try_save_verse(book, chapter, verse, version_num, session,
+                                    abbr, csv_path, progress_dict, done_set, stats)
             if result == "empty":
                 consecutive_empty += 1
                 if consecutive_empty >= STOP_AFTER_EMPTY_VERSES:
@@ -424,7 +394,7 @@ def process_chapter(book, chapter, version_num, abbr, csv_path,
             else:
                 consecutive_empty = 0
     finally:
-        driver_queue.put((driver, wait))
+        session_queue.put(session)
 
     if chapter_finished:
         mark_chapter_done(version_num, book, chapter, progress_dict, done_set)
@@ -437,18 +407,18 @@ def process_chapter(book, chapter, version_num, abbr, csv_path,
 # ─────────────────────────────────────────────
 
 def probe_testament(label, probe_books, version_num, progress_dict, done_set,
-                    stats, driver, wait, csv_path, abbr) -> bool:
+                    stats, session, csv_path, abbr) -> bool:
     book      = probe_books[0]
     confirmed = 0
     for verse in (1, 2):
         key = f"{book}.1.{verse}"
         if is_done(key, done_set):
             if os.path.exists(csv_path):
-                print(f"  ⏭️  [{label} probe] {key} already done.")
+                print(f"  [{label} probe] {key} already done.")
                 confirmed += 1
             continue
-        print(f"  🔍 [{label} probe] {key}")
-        result = try_save_verse(book, 1, verse, version_num, driver, wait, abbr,
+        print(f"  [{label} probe] {key}")
+        result = try_save_verse(book, 1, verse, version_num, session, abbr,
                                 csv_path, progress_dict, done_set, stats)
         if result == "pair":
             confirmed += 1
@@ -459,11 +429,25 @@ def probe_testament(label, probe_books, version_num, progress_dict, done_set,
 
 
 # ─────────────────────────────────────────────
+# SESSION POOL  (replaces Chrome driver pool)
+# ─────────────────────────────────────────────
+
+def build_session_pool(n: int) -> Queue:
+    q = Queue()
+    for i in range(n):
+        s = requests.Session()
+        s.headers.update(REQUEST_HEADERS)
+        q.put(s)
+    print(f"  {n} HTTP sessions ready (no browsers needed)")
+    return q
+
+
+# ─────────────────────────────────────────────
 # MAIN PER-VERSION PROCESSING
 # ─────────────────────────────────────────────
 
 def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
-                            driver_queue, progress_dict, testament_status):
+                            session_queue, progress_dict, testament_status):
     print(f"\n{'='*60}")
     print(f"  Processing: {lang_name} ({lang_code}) — version {version_num}"
           f"{' / ' + abbr if abbr else ''}")
@@ -478,37 +462,35 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
     cached   = testament_status.get(version_num)
 
     # ── Probe phase ──────────────────────────────────────────────────────────
-    probe_driver, probe_wait = driver_queue.get()
+    probe_session = session_queue.get()
     try:
         if cached and "ot" in cached:
             ot_ok = cached["ot"]
-            print(f"\n  📜 OT probe cached ({'✅' if ot_ok else '🛑'}).")
+            print(f"\n  OT probe cached ({'ok' if ot_ok else 'skip'}).")
         else:
-            print(f"\n  📜 Probing OT (GEN 1:1–1:2)...")
+            print(f"\n  Probing OT (GEN 1:1–1:2)...")
             ot_ok = probe_testament("OT", OT_BOOKS, version_num, progress_dict,
-                                    done_set, stats, probe_driver, probe_wait,
-                                    csv_path, abbr)
+                                    done_set, stats, probe_session, csv_path, abbr)
             testament_status.setdefault(version_num, {})["ot"] = ot_ok
             save_testament_status(testament_status)
 
         if cached and "nt" in cached:
             nt_ok = cached["nt"]
-            print(f"  ✝️  NT probe cached ({'✅' if nt_ok else '🛑'}).")
+            print(f"  NT probe cached ({'ok' if nt_ok else 'skip'}).")
         else:
-            print(f"  ✝️  Probing NT (MAT 1:1–1:2)...")
+            print(f"  Probing NT (MAT 1:1–1:2)...")
             nt_ok = probe_testament("NT", NT_BOOKS, version_num, progress_dict,
-                                    done_set, stats, probe_driver, probe_wait,
-                                    csv_path, abbr)
+                                    done_set, stats, probe_session, csv_path, abbr)
             testament_status.setdefault(version_num, {})["nt"] = nt_ok
             save_testament_status(testament_status)
     finally:
-        driver_queue.put((probe_driver, probe_wait))
+        session_queue.put(probe_session)
 
     flush_progress(progress_dict)
     print(f"  OT: {'process' if ot_ok else 'skip'} | NT: {'process' if nt_ok else 'skip'}")
 
     if not ot_ok and not nt_ok:
-        print(f"  ⛔ No content found — skipping {lang_name} ({lang_code}).")
+        print(f"  No content found — skipping {lang_name} ({lang_code}).")
         return stats
 
     # ── Chapter task list ─────────────────────────────────────────────────────
@@ -525,15 +507,14 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
                 tasks.append((book, chapter))
 
     if skipped_chapters:
-        print(f"  ⏭️  Skipped {skipped_chapters} already-completed chapters")
+        print(f"  Skipped {skipped_chapters} already-completed chapters")
 
-    # ── Parallel chapter processing ───────────────────────────────────────────
-    workers = max(1, min(NUM_WORKERS, driver_queue.qsize()))
-    print(f"  🚀 Processing {len(tasks)} chapters across {workers} workers...")
+    workers = min(NUM_WORKERS, session_queue.qsize())
+    print(f"  Processing {len(tasks)} chapters across {workers} workers...")
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
             pool.submit(process_chapter, book, chapter, version_num, abbr,
-                        csv_path, progress_dict, done_set, driver_queue):
+                        csv_path, progress_dict, done_set, session_queue):
                 (book, chapter)
             for book, chapter in tasks
         }
@@ -544,46 +525,23 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
                 stats["parallel"] += cs["parallel"]
                 stats["skipped"]  += cs["skipped"]
                 stats["missing"]  += cs["missing"]
-                print(f"  📘 {book}.{chapter} done "
+                print(f"  {book}.{chapter} done "
                       f"(+{cs['parallel']} pairs, {cs['missing']} missing)")
             except Exception as e:
-                print(f"  ❌ {book}.{chapter} failed: {e}")
+                print(f"  {book}.{chapter} failed: {e}")
 
     flush_progress(progress_dict)
-    print(f"\n  📊 {lang_name} ({lang_code}) v{version_num} Summary:")
-    print(f"     ✅ Parallel pairs saved  : {stats['parallel']}")
-    print(f"     ⏭️  Already done          : {stats['skipped']}")
-    print(f"     ⛔ Missing on one side   : {stats['missing']}")
-    print(f"     📄 Output CSV            : {csv_path}")
+    print(f"\n  {lang_name} ({lang_code}) v{version_num} Summary:")
+    print(f"     Parallel pairs saved  : {stats['parallel']}")
+    print(f"     Already done          : {stats['skipped']}")
+    print(f"     Missing on one side   : {stats['missing']}")
+    print(f"     Output CSV            : {csv_path}")
     return stats
 
 
 # ─────────────────────────────────────────────
-# DRIVER POOL & VERSIONS CSV
+# VERSIONS CSV & LANGUAGE SELECTION
 # ─────────────────────────────────────────────
-
-def make_driver(driver_path):
-    options = Options()
-    if HEADLESS:
-        options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1280,900")
-    for binary in ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium"]:
-        if os.path.exists(binary):
-            options.binary_location = binary
-            break
-    return webdriver.Chrome(service=Service(driver_path), options=options)
-
-def build_driver_pool(n) -> Queue:
-    driver_path = ChromeDriverManager().install()
-    q = Queue()
-    for i in range(n):
-        d = make_driver(driver_path)
-        q.put((d, WebDriverWait(d, 15)))
-        print(f"  🧩 Browser {i+1}/{n} ready")
-    return q
 
 def load_versions_csv(csv_path: str) -> list:
     entries = []
@@ -592,7 +550,6 @@ def load_versions_csv(csv_path: str) -> list:
             vid = row["version_id"].strip()
             if not vid.isdigit():
                 continue
-            # Skip rows explicitly marked not viable by the scanner
             if row.get("viable", "").strip().lower() == "false":
                 continue
             abbr = row.get("abbr", "").strip() or None
@@ -601,41 +558,24 @@ def load_versions_csv(csv_path: str) -> list:
     return entries
 
 
-# ─────────────────────────────────────────────
-# INTERACTIVE LANGUAGE SELECTION
-# ─────────────────────────────────────────────
-
 def prompt_language_selection(entries: list) -> list:
-    """
-    Ask the user to enter a YouVersion version ID directly.
-    Tells them the language they are running once confirmed.
-    """
-    available    = [(vid, lc, ln, ab) for (vid, lc, ln, ab) in entries]
-    available_by_id = {vid: (vid, lc, ln, ab) for (vid, lc, ln, ab) in available}
-
-    if not available:
-        print("  No versions found in CSV.")
-        return []
-
+    available_by_id = {vid: (vid, lc, ln, ab) for (vid, lc, ln, ab) in entries}
     while True:
         raw = input("\n  Enter your version ID (or 'q' to quit): ").strip()
         if raw.lower() in ("q", "quit", "exit"):
-            print("\n  Bye! 👋\n")
+            print("\n  Bye!\n")
             sys.exit(0)
         if not raw.isdigit():
-            print("  ⚠️  Please enter a numeric version ID, or 'q' to quit.\n")
+            print("  Please enter a numeric version ID, or 'q' to quit.\n")
             continue
-
         vid = int(raw)
-
         if vid not in available_by_id:
-            print(f"  ⚠️  Version {vid} was not found in the versions CSV.\n")
+            print(f"  Version {vid} was not found in the versions CSV.\n")
             continue
-
         entry = available_by_id[vid]
         _, lang_code, lang_name, abbr = entry
         abbr_str = f" ({abbr})" if abbr else ""
-        print(f"\n  ✅  Starting scrape for {lang_name}{abbr_str} [{lang_code}]...\n")
+        print(f"\n  Starting scrape for {lang_name}{abbr_str} [{lang_code}]...\n")
         return [entry]
 
 
@@ -644,46 +584,35 @@ def prompt_language_selection(entries: list) -> list:
 # ─────────────────────────────────────────────
 
 def main():
-    # ── Load and display available languages ─────────────────────────────────
     all_entries = load_versions_csv(VERSIONS_CSV)
     if not all_entries:
-        print("❌ No viable versions found in CSV. Exiting.")
+        print("No viable versions found in CSV. Exiting.")
         return
 
-    print(f"📋 Loaded {len(all_entries)} viable language version(s) from {VERSIONS_CSV}")
-
-    # ── Interactive selection ─────────────────────────────────────────────────
+    print(f"Loaded {len(all_entries)} viable language version(s) from {VERSIONS_CSV}")
     selected_entries = prompt_language_selection(all_entries)
     if not selected_entries:
-        print("❌ No languages selected. Exiting.")
+        print("No languages selected. Exiting.")
         return
 
-    print(f"\n🧰 Spinning up {NUM_WORKERS} browsers...")
-    driver_queue = build_driver_pool(NUM_WORKERS)
+    print(f"\nSpinning up {NUM_WORKERS} HTTP sessions (no browsers needed)...")
+    session_queue = build_session_pool(NUM_WORKERS)
 
     progress         = load_global_progress()
     testament_status = load_testament_status()
     grand_total      = 0
 
-    try:
-        for version_num, lang_code, lang_name, abbr in selected_entries:
-            stats = build_dataset_for_bible(
-                version_num, lang_code, lang_name, abbr,
-                driver_queue, progress, testament_status,
-            )
-            grand_total += stats["parallel"]
-    finally:
-        while not driver_queue.empty():
-            d, _ = driver_queue.get()
-            try:
-                d.quit()
-            except Exception:
-                pass
+    for version_num, lang_code, lang_name, abbr in selected_entries:
+        stats = build_dataset_for_bible(
+            version_num, lang_code, lang_name, abbr,
+            session_queue, progress, testament_status,
+        )
+        grand_total += stats["parallel"]
 
-    print(f"\n🎉 All done!  Total parallel pairs across all selected versions: {grand_total}")
-    print(f"   Output root      : {os.path.abspath(OUTPUT_ROOT)}")
-    print(f"   English cache    : {os.path.abspath(ENGLISH_CACHE_CSV)}")
-    print(f"   Progress file    : {os.path.abspath(PROGRESS_FILE)}")
+    print(f"\nAll done!  Total parallel pairs: {grand_total}")
+    print(f"   Output root   : {os.path.abspath(OUTPUT_ROOT)}")
+    print(f"   English cache : {os.path.abspath(ENGLISH_CACHE_CSV)}")
+    print(f"   Progress file : {os.path.abspath(PROGRESS_FILE)}")
 
 
 if __name__ == "__main__":
