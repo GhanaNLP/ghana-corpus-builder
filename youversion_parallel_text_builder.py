@@ -91,9 +91,9 @@ VERSE_SELECTOR = "p.text-17"
 NUM_WORKERS = 16
 
 # Polite delay between requests per worker (seconds).
-REQUEST_DELAY = 0.4
+REQUEST_DELAY = 2
 
-REQUEST_TIMEOUT = 12   # seconds per HTTP request
+REQUEST_TIMEOUT = 30   # seconds per HTTP request
 MAX_RETRIES     = 3
 RETRY_WAIT      = 3
 
