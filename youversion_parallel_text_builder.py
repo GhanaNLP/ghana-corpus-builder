@@ -1,18 +1,24 @@
 """
 YouVersion Bible Parallel Text Dataset Builder  (English ↔ Local language)
 ===========================================================================
-HTTP-only version — uses requests + BeautifulSoup instead of Selenium/Chrome.
+HTTP-only, chapter-level edition.
 
-No Chrome required. Each worker is a lightweight requests.Session (~1 MB)
-instead of a browser instance (~400 MB), so you can safely run 20-30
-parallel workers on a normal laptop.
+Instead of one HTTP request per verse (~30 per chapter), this version fetches
+one chapter at a time from bible.com's internal JSON API and splits it into
+verses using the data-usfm markers in the returned HTML.  That is ~30× fewer
+requests for the local language, and near-zero extra requests for English
+(verses are batch-cached the first time a chapter is fetched and reused for
+every subsequent language).
 
-Works because bible.com (Next.js) server-side renders verse content into
-the initial HTML response — no JavaScript execution needed.
+API endpoint:
+    https://nodejs.bible.com/api/bible/chapter/3.1?id={version}&reference={BOOK}.{ch}
 
-If you ever see 0 pairs and lots of "empty" results, the site may have
-switched to client-side rendering for your IP/region; in that case fall
-back to youversion_parallel_text_builder.py (Selenium).
+The public www.bible.com HTML pages now serve a JavaScript bot-challenge shell
+to plain HTTP clients, so we hit the JSON API directly instead — it needs only
+the numeric version id and a "BOOK.chapter" reference (no version abbreviation)
+and returns clean per-verse content.
+
+No Chrome / Selenium required.
 
 OUTPUT LAYOUT
 -------------
@@ -22,7 +28,7 @@ OUTPUT LAYOUT
         english_cache.csv
         {LANG_NAME}_{LANG_CODE}_v{VERSION_ID}.csv
 
-CSV columns in versions file:  version_id, lang_code, lang_name, abbr  (abbr optional)
+CSV columns in versions file:  version_id, lang_code, lang_name, viable, abbr
 Requires: requests, beautifulsoup4, lxml
 """
 
@@ -44,15 +50,11 @@ REQUIRED_PACKAGES = [
 ]
 
 def _install_packages():
-    import_names = {
-        "beautifulsoup4": "bs4",
-        "huggingface_hub": "huggingface_hub",
-    }
+    import_names = {"beautifulsoup4": "bs4", "huggingface_hub": "huggingface_hub"}
     missing = []
     for pkg in REQUIRED_PACKAGES:
-        import_name = import_names.get(pkg, pkg)
         try:
-            __import__(import_name)
+            __import__(import_names.get(pkg, pkg))
         except ImportError:
             missing.append(pkg)
     if missing:
@@ -84,27 +86,19 @@ VERSIONS_CSV = "youversion_ghana_versions.csv"
 ENGLISH_VERSION_NUM = 37
 ENGLISH_ABBR        = "CEB"
 
-VERSE_SELECTOR = "p.text-17"
-
-# More workers are fine — sessions are ~1 MB, not ~400 MB like browsers.
-# Stay moderate to avoid rate-limiting from bible.com.
-NUM_WORKERS = 16
-
-# Polite delay between requests per worker (seconds).
-REQUEST_DELAY = 4
-
-REQUEST_TIMEOUT = 15   # seconds per HTTP request
+NUM_WORKERS     = 16
+REQUEST_DELAY   = 2      # seconds between requests per worker
+REQUEST_TIMEOUT = 20
 MAX_RETRIES     = 3
-RETRY_WAIT      = 3
+RETRY_WAIT      = 5
 
-# Fake a real browser so the server returns normal HTML
 REQUEST_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (X11; Linux x86_64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/124.0.0.0 Safari/537.36"
     ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
     "Accept-Encoding": "gzip, deflate, br",
 }
@@ -137,11 +131,8 @@ PROGRESS_FILE         = os.path.join(OUTPUT_ROOT, "progress.json")
 TESTAMENT_STATUS_FILE = os.path.join(OUTPUT_ROOT, "testament_status.json")
 ENGLISH_CACHE_CSV     = os.path.join(OUTPUT_ROOT, "english_cache.csv")
 
-CSV_FIELDNAMES = ["verse_key", "version_id", "eng", "local"]
-
-STOP_AFTER_EMPTY_VERSES = 2
-MAX_VERSES_PER_CHAPTER  = 200
-CHAPTER_DONE_SUFFIX     = ".__done__"
+CSV_FIELDNAMES      = ["verse_key", "version_id", "eng", "local"]
+CHAPTER_DONE_SUFFIX = ".__done__"
 
 # ── Locks ─────────────────────────────────────────────────────────────────────
 PROG_LOCK    = threading.Lock()
@@ -150,15 +141,15 @@ EN_CSV_LOCK  = threading.Lock()
 _CSV_LOCKS:      dict[str, threading.Lock] = {}
 _CSV_LOCKS_META = threading.Lock()
 
-def get_lang_csv_lock(csv_name: str) -> threading.Lock:
+def get_lang_csv_lock(csv_path: str) -> threading.Lock:
     with _CSV_LOCKS_META:
-        if csv_name not in _CSV_LOCKS:
-            _CSV_LOCKS[csv_name] = threading.Lock()
-        return _CSV_LOCKS[csv_name]
+        if csv_path not in _CSV_LOCKS:
+            _CSV_LOCKS[csv_path] = threading.Lock()
+        return _CSV_LOCKS[csv_path]
 
 
 # ─────────────────────────────────────────────
-# TEXT CLEANING  (unchanged from Selenium version)
+# TEXT CLEANING
 # ─────────────────────────────────────────────
 
 def clean_text(text: str) -> str:
@@ -173,7 +164,7 @@ def clean_text(text: str) -> str:
                 line += '.'
             processed.append(line)
     text = ' '.join(processed)
-    text = re.sub(r'[\"\""''\(\)\[\]\{\}]', '', text)
+    text = re.sub(r'[\"“”‘’\(\)\[\]\{\}]', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
     text = re.sub(r'[,.]{2,}', '.', text)
     text = re.sub(r'([,.!?;:])\.', '.', text)
@@ -183,7 +174,87 @@ def clean_text(text: str) -> str:
 
 
 # ─────────────────────────────────────────────
-# ENGLISH CACHE
+# CHAPTER-LEVEL FETCHING  (YouVersion JSON API)
+# ─────────────────────────────────────────────
+#
+# We use bible.com's internal chapter API instead of scraping the public
+# www.bible.com HTML, which now serves a JavaScript bot-challenge shell to
+# plain HTTP clients.  The API returns the whole chapter as one JSON payload
+# whose `content` field is clean per-verse HTML:
+#
+#   <span class="verse v1" data-usfm="GEN.1.1">
+#       <span class="label">1</span>
+#       <span class="content">In the beginning ...</span>
+#   </span>
+#
+# Selecting span.content excludes verse-number labels and footnotes, so the
+# extracted text is already clean.  No version abbreviation is required —
+# just the numeric version id and a "BOOK.chapter" reference.
+
+CHAPTER_API = "https://nodejs.bible.com/api/bible/chapter/3.1"
+
+
+def _parse_chapter_content(content_html: str, book: str, chapter: int) -> dict[int, str]:
+    """Return {verse_num: raw_text} from a chapter API `content` HTML blob."""
+    soup = BeautifulSoup(content_html, "lxml")
+    prefix = f"{book}.{chapter}."
+    parts: dict[int, list[str]] = {}
+
+    for span in soup.find_all("span", attrs={"data-usfm": True}):
+        usfm = span["data-usfm"]
+        if not usfm.startswith(prefix):
+            continue
+        tail = usfm[len(prefix):]
+        # Handle ranges/combined verses like "1-3" or "1+2" — key on the first.
+        try:
+            verse_num = int(re.split(r"[-+]", tail)[0])
+        except ValueError:
+            continue
+        # Prefer the inner content spans (they exclude labels/footnotes).
+        content_spans = span.select("span.content")
+        if content_spans:
+            text = " ".join(c.get_text(" ", strip=True) for c in content_spans)
+        else:
+            text = span.get_text(" ", strip=True)
+        text = text.strip()
+        if text:
+            parts.setdefault(verse_num, []).append(text)
+
+    return {n: " ".join(chunks) for n, chunks in parts.items()}
+
+
+def get_chapter_verses(session: requests.Session, version_num: int, book: str,
+                       chapter: int, abbr: str | None = None) -> dict[int, str] | None:
+    """
+    Fetch one chapter via the JSON API and return {verse_num: raw_text}.
+    Returns None if the chapter cannot be fetched or has no parseable verses.
+    `abbr` is accepted for signature compatibility but is not needed by the API.
+    """
+    params = {"id": version_num, "reference": f"{book}.{chapter}"}
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            time.sleep(REQUEST_DELAY)
+            resp = session.get(CHAPTER_API, params=params,
+                               headers=REQUEST_HEADERS, timeout=REQUEST_TIMEOUT)
+            if resp.status_code == 404:
+                return None          # chapter/version genuinely absent
+            resp.raise_for_status()
+            data = resp.json()
+            content = data.get("content", "")
+            if not content:
+                return None
+            verses = _parse_chapter_content(content, book, chapter)
+            return verses if verses else None
+        except Exception:
+            if attempt < MAX_RETRIES:
+                time.sleep(RETRY_WAIT)
+            else:
+                return None
+    return None
+
+
+# ─────────────────────────────────────────────
+# ENGLISH CACHE  (chapter-level batch fetching)
 # ─────────────────────────────────────────────
 
 _en_cache: dict[str, str] = {}
@@ -201,7 +272,9 @@ def _load_en_cache_once():
                     _en_cache[row["verse_key"]] = row.get("eng", "")
         _en_cache_loaded = True
 
-def _append_en_cache_row(verse_key: str, eng: str):
+
+def _batch_append_en_cache(rows: list[dict]):
+    """Append multiple {verse_key, eng} rows to english_cache.csv atomically."""
     with EN_CSV_LOCK:
         os.makedirs(OUTPUT_ROOT, exist_ok=True)
         write_header = not os.path.exists(ENGLISH_CACHE_CSV)
@@ -209,47 +282,63 @@ def _append_en_cache_row(verse_key: str, eng: str):
             writer = csv.DictWriter(f, fieldnames=["verse_key", "eng"])
             if write_header:
                 writer.writeheader()
-            writer.writerow({"verse_key": verse_key, "eng": eng})
-        _en_cache[verse_key] = eng
+            writer.writerows(rows)
 
 
-# ─────────────────────────────────────────────
-# HTTP VERSE FETCHING  (replaces Selenium driver calls)
-# ─────────────────────────────────────────────
+def get_english_chapter(session: requests.Session, book: str, chapter: int,
+                        needed_verses: set[int]) -> dict[int, str]:
+    """
+    Return {verse_num: cleaned_text} for the requested verse numbers.
 
-def get_verse_text(session: requests.Session, version_num: int, book: str,
-                   chapter: int, verse: int, abbr: str | None = None) -> str | None:
-    suffix = f".{abbr}" if abbr else ""
-    url = f"https://www.bible.com/bible/{version_num}/{book}.{chapter}.{verse}{suffix}"
-    for attempt in range(1, MAX_RETRIES + 1):
-        try:
-            time.sleep(REQUEST_DELAY)
-            resp = session.get(url, headers=REQUEST_HEADERS, timeout=REQUEST_TIMEOUT)
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, "lxml")
-            paras = soup.select(VERSE_SELECTOR)
-            texts = [p.get_text(separator=" ", strip=True) for p in paras if p.get_text(strip=True)]
-            if texts:
-                return "\n".join(texts)
-            return None
-        except Exception:
-            if attempt < MAX_RETRIES:
-                time.sleep(RETRY_WAIT)
-            else:
-                return None
-    return None
-
-
-def get_english_verse(session: requests.Session, book: str, chapter: int, verse: int) -> str | None:
+    Checks the in-memory cache first.  If any needed verse is missing, fetches
+    the full English chapter once, caches all verses found, then returns the
+    subset that was requested.  This means subsequent languages reuse the cache
+    and incur zero extra HTTP calls for English.
+    """
     _load_en_cache_once()
-    key = f"{book}.{chapter}.{verse}"
+    prefix = f"{book}.{chapter}."
+
     with _en_cache_lock:
-        if key in _en_cache:
-            return _en_cache[key] or None
-    raw     = get_verse_text(session, ENGLISH_VERSION_NUM, book, chapter, verse, ENGLISH_ABBR)
-    cleaned = clean_text(raw) if raw and raw.strip() else ""
-    _append_en_cache_row(key, cleaned)
-    return cleaned or None
+        missing = [v for v in needed_verses if f"{prefix}{v}" not in _en_cache]
+
+    if not missing:
+        with _en_cache_lock:
+            return {v: _en_cache[f"{prefix}{v}"]
+                    for v in needed_verses
+                    if _en_cache.get(f"{prefix}{v}")}
+
+    # At least one verse not yet cached — fetch the whole chapter
+    raw_verses = get_chapter_verses(session, ENGLISH_VERSION_NUM, book, chapter, ENGLISH_ABBR)
+
+    new_rows: list[dict] = []
+    result:   dict[int, str] = {}
+
+    with _en_cache_lock:
+        if raw_verses:
+            for verse_num, raw_text in raw_verses.items():
+                key = f"{prefix}{verse_num}"
+                if key not in _en_cache:
+                    cleaned = clean_text(raw_text) if raw_text.strip() else ""
+                    _en_cache[key] = cleaned
+                    new_rows.append({"verse_key": key, "eng": cleaned})
+
+        # Mark any still-missing verses as empty so we don't retry them
+        for v in missing:
+            key = f"{prefix}{v}"
+            if key not in _en_cache:
+                _en_cache[key] = ""
+                new_rows.append({"verse_key": key, "eng": ""})
+
+        # Build result for the originally requested set
+        for v in needed_verses:
+            val = _en_cache.get(f"{prefix}{v}", "")
+            if val:
+                result[v] = val
+
+    if new_rows:
+        _batch_append_en_cache(new_rows)
+
+    return result
 
 
 # ─────────────────────────────────────────────
@@ -323,7 +412,7 @@ def lang_csv_path(lang_name: str, lang_code: str, version_num: int) -> str:
     return os.path.join(OUTPUT_ROOT, lang_csv_name(lang_name, lang_code, version_num))
 
 def save_parallel_pair(key: str, version_num: int, en_text: str,
-                       local_text: str, csv_path: str) -> bool:
+                       local_text: str, csv_path: str):
     lock = get_lang_csv_lock(csv_path)
     os.makedirs(OUTPUT_ROOT, exist_ok=True)
     with lock:
@@ -338,66 +427,53 @@ def save_parallel_pair(key: str, version_num: int, en_text: str,
                 "eng":        en_text,
                 "local":      local_text,
             })
-    return True
 
 
 # ─────────────────────────────────────────────
-# VERSE HANDLER
-# ─────────────────────────────────────────────
-
-def try_save_verse(book, chapter, verse, version_num, session, abbr,
-                   csv_path, progress_dict, done_set, stats) -> str:
-    key = f"{book}.{chapter}.{verse}"
-
-    raw_local  = get_verse_text(session, version_num, book, chapter, verse, abbr)
-    local_text = clean_text(raw_local) if raw_local else ""
-    if not local_text:
-        return "empty"
-
-    en_text = get_english_verse(session, book, chapter, verse)
-    if not en_text:
-        mark_verse_done(version_num, key, progress_dict, done_set)
-        stats["missing"] += 1
-        return "missing"
-
-    save_parallel_pair(key, version_num, en_text, local_text, csv_path)
-    mark_verse_done(version_num, key, progress_dict, done_set)
-    stats["parallel"] += 1
-    print(f"    + {key}")
-    return "pair"
-
-
-# ─────────────────────────────────────────────
-# CHAPTER WORKER  (uses a session from the pool instead of a browser)
+# CHAPTER WORKER
 # ─────────────────────────────────────────────
 
 def process_chapter(book, chapter, version_num, abbr, csv_path,
                     progress_dict, done_set, session_queue: Queue):
     stats = {"parallel": 0, "skipped": 0, "missing": 0}
     session = session_queue.get()
-    chapter_finished = False
     try:
-        consecutive_empty = 0
-        for verse in range(1, MAX_VERSES_PER_CHAPTER + 1):
-            key = f"{book}.{chapter}.{verse}"
-            if is_done(key, done_set):
-                stats["skipped"] += 1
-                consecutive_empty = 0
-                continue
-            result = try_save_verse(book, chapter, verse, version_num, session,
-                                    abbr, csv_path, progress_dict, done_set, stats)
-            if result == "empty":
-                consecutive_empty += 1
-                if consecutive_empty >= STOP_AFTER_EMPTY_VERSES:
-                    chapter_finished = True
-                    break
-            else:
-                consecutive_empty = 0
+        local_verses = get_chapter_verses(session, version_num, book, chapter, abbr)
+        if not local_verses:
+            # Version has no content for this chapter
+            mark_chapter_done(version_num, book, chapter, progress_dict, done_set)
+            flush_progress(progress_dict)
+            return stats
+
+        # Split into already-done and still-needed verse numbers
+        all_verse_nums = set(local_verses.keys())
+        skipped = {v for v in all_verse_nums
+                   if is_done(f"{book}.{chapter}.{v}", done_set)}
+        needed  = all_verse_nums - skipped
+        stats["skipped"] += len(skipped)
+
+        if needed:
+            en_verses = get_english_chapter(session, book, chapter, needed)
+            for verse_num in sorted(needed):
+                key        = f"{book}.{chapter}.{verse_num}"
+                local_text = clean_text(local_verses[verse_num])
+                if not local_text:
+                    mark_verse_done(version_num, key, progress_dict, done_set)
+                    continue
+                en_text = en_verses.get(verse_num, "")
+                if not en_text:
+                    mark_verse_done(version_num, key, progress_dict, done_set)
+                    stats["missing"] += 1
+                    continue
+                save_parallel_pair(key, version_num, en_text, local_text, csv_path)
+                mark_verse_done(version_num, key, progress_dict, done_set)
+                stats["parallel"] += 1
+                print(f"    + {key}")
+
+        mark_chapter_done(version_num, book, chapter, progress_dict, done_set)
     finally:
         session_queue.put(session)
 
-    if chapter_finished:
-        mark_chapter_done(version_num, book, chapter, progress_dict, done_set)
     flush_progress(progress_dict)
     return stats
 
@@ -406,39 +482,28 @@ def process_chapter(book, chapter, version_num, abbr, csv_path,
 # PROBE TESTAMENT
 # ─────────────────────────────────────────────
 
-def probe_testament(label, probe_books, version_num, progress_dict, done_set,
-                    stats, session, csv_path, abbr) -> bool:
-    book      = probe_books[0]
-    confirmed = 0
-    for verse in (1, 2):
-        key = f"{book}.1.{verse}"
-        if is_done(key, done_set):
-            if os.path.exists(csv_path):
-                print(f"  [{label} probe] {key} already done.")
-                confirmed += 1
-            continue
-        print(f"  [{label} probe] {key}")
-        result = try_save_verse(book, 1, verse, version_num, session, abbr,
-                                csv_path, progress_dict, done_set, stats)
-        if result == "pair":
-            confirmed += 1
-        elif result == "empty":
-            mark_verse_done(version_num, key, progress_dict, done_set)
-            stats["missing"] += 1
-    return confirmed > 0
+def probe_testament(label: str, probe_books: list, version_num: int,
+                    session: requests.Session, abbr: str | None) -> bool:
+    """Return True if the version has any content in chapter 1 of the first probe book."""
+    book = probe_books[0]
+    print(f"  [{label} probe] fetching {book}.1 ...")
+    verses = get_chapter_verses(session, version_num, book, 1, abbr)
+    found  = bool(verses)
+    print(f"  [{label} probe] {'content found' if found else 'no content — skipping testament'}")
+    return found
 
 
 # ─────────────────────────────────────────────
-# SESSION POOL  (replaces Chrome driver pool)
+# SESSION POOL
 # ─────────────────────────────────────────────
 
 def build_session_pool(n: int) -> Queue:
     q = Queue()
-    for i in range(n):
+    for _ in range(n):
         s = requests.Session()
         s.headers.update(REQUEST_HEADERS)
         q.put(s)
-    print(f"  {n} HTTP sessions ready (no browsers needed)")
+    print(f"  {n} HTTP sessions ready")
     return q
 
 
@@ -468,9 +533,8 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
             ot_ok = cached["ot"]
             print(f"\n  OT probe cached ({'ok' if ot_ok else 'skip'}).")
         else:
-            print(f"\n  Probing OT (GEN 1:1–1:2)...")
-            ot_ok = probe_testament("OT", OT_BOOKS, version_num, progress_dict,
-                                    done_set, stats, probe_session, csv_path, abbr)
+            print(f"\n  Probing OT ...")
+            ot_ok = probe_testament("OT", OT_BOOKS, version_num, probe_session, abbr)
             testament_status.setdefault(version_num, {})["ot"] = ot_ok
             save_testament_status(testament_status)
 
@@ -478,9 +542,8 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
             nt_ok = cached["nt"]
             print(f"  NT probe cached ({'ok' if nt_ok else 'skip'}).")
         else:
-            print(f"  Probing NT (MAT 1:1–1:2)...")
-            nt_ok = probe_testament("NT", NT_BOOKS, version_num, progress_dict,
-                                    done_set, stats, probe_session, csv_path, abbr)
+            print(f"  Probing NT ...")
+            nt_ok = probe_testament("NT", NT_BOOKS, version_num, probe_session, abbr)
             testament_status.setdefault(version_num, {})["nt"] = nt_ok
             save_testament_status(testament_status)
     finally:
@@ -494,7 +557,7 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
         return stats
 
     # ── Chapter task list ─────────────────────────────────────────────────────
-    tasks = []
+    tasks            = []
     skipped_chapters = 0
     for book in ALL_BOOK_CODES:
         in_ot = book in OT_BOOKS
@@ -510,7 +573,7 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
         print(f"  Skipped {skipped_chapters} already-completed chapters")
 
     workers = min(NUM_WORKERS, session_queue.qsize())
-    print(f"  Processing {len(tasks)} chapters across {workers} workers...")
+    print(f"  Processing {len(tasks)} chapters across {workers} workers ...")
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
             pool.submit(process_chapter, book, chapter, version_num, abbr,
@@ -561,21 +624,21 @@ def load_versions_csv(csv_path: str) -> list:
 def prompt_language_selection(entries: list) -> list:
     available_by_id = {vid: (vid, lc, ln, ab) for (vid, lc, ln, ab) in entries}
     while True:
-        raw = input("\n  Enter your version ID (or 'q' to quit): ").strip()
+        raw = input("\n  Enter version ID (or 'q' to quit): ").strip()
         if raw.lower() in ("q", "quit", "exit"):
             print("\n  Bye!\n")
             sys.exit(0)
         if not raw.isdigit():
-            print("  Please enter a numeric version ID, or 'q' to quit.\n")
+            print("  Please enter a numeric version ID.\n")
             continue
         vid = int(raw)
         if vid not in available_by_id:
-            print(f"  Version {vid} was not found in the versions CSV.\n")
+            print(f"  Version {vid} not found in CSV.\n")
             continue
         entry = available_by_id[vid]
         _, lang_code, lang_name, abbr = entry
         abbr_str = f" ({abbr})" if abbr else ""
-        print(f"\n  Starting scrape for {lang_name}{abbr_str} [{lang_code}]...\n")
+        print(f"\n  Starting scrape for {lang_name}{abbr_str} [{lang_code}] ...\n")
         return [entry]
 
 
@@ -590,19 +653,19 @@ def main():
         return
 
     print(f"Loaded {len(all_entries)} viable language version(s) from {VERSIONS_CSV}")
-    selected_entries = prompt_language_selection(all_entries)
-    if not selected_entries:
+    selected = prompt_language_selection(all_entries)
+    if not selected:
         print("No languages selected. Exiting.")
         return
 
-    print(f"\nSpinning up {NUM_WORKERS} HTTP sessions (no browsers needed)...")
+    print(f"\nSpinning up {NUM_WORKERS} HTTP sessions ...")
     session_queue = build_session_pool(NUM_WORKERS)
 
     progress         = load_global_progress()
     testament_status = load_testament_status()
     grand_total      = 0
 
-    for version_num, lang_code, lang_name, abbr in selected_entries:
+    for version_num, lang_code, lang_name, abbr in selected:
         stats = build_dataset_for_bible(
             version_num, lang_code, lang_name, abbr,
             session_queue, progress, testament_status,
