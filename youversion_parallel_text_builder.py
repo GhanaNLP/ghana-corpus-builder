@@ -88,12 +88,12 @@ VERSE_SELECTOR = "p.text-17"
 
 # More workers are fine — sessions are ~1 MB, not ~400 MB like browsers.
 # Stay moderate to avoid rate-limiting from bible.com.
-NUM_WORKERS = 5
+NUM_WORKERS = 16
 
 # Polite delay between requests per worker (seconds).
 REQUEST_DELAY = 4
 
-REQUEST_TIMEOUT = 30   # seconds per HTTP request
+REQUEST_TIMEOUT = 15   # seconds per HTTP request
 MAX_RETRIES     = 3
 RETRY_WAIT      = 3
 
