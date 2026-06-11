@@ -59,7 +59,7 @@ The table below lists all languages confirmed to have content on YouVersion and 
 | Fante | fat | 2913, 2914 | OT + NT | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
 | Fulfulde; Maasina | ffm | 3093 | OT + NT | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
 | Ga | gaa | 2708, 2712 | OT + NT | [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) | Assigned |
-| Gonja | gjn | 1729 | OT + NT | — | Not started |
+| Gonja | gjn | 1729 | OT + NT | [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) | Assigned |
 | Hausa | hau | 71, 1614 | OT + NT | — | Not started |
 | Kasem | xsm | 3661 | OT + NT | — | Not started |
 | Konkomba | xon | 1150 | OT + NT | — | Not started |
