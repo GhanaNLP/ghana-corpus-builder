@@ -22,7 +22,7 @@ This project scrapes those verse pairs, cleans the text, and saves them as struc
 ### Clone and run
 
 ```bash
-git clone https://github.com/ghananlpcommunity/ghana-mt-builder.git
+git clone https://github.com/GhanaNLP/ghana-mt-builder.git
 cd ghana-mt-builder
 python youversion_parallel_text_builder.py
 ```
