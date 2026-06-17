@@ -50,7 +50,7 @@ The table below lists all languages confirmed to have content on YouVersion and 
 | Asante Twi | twi | 1461, 1861, 2094 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
 | Bassar Ntcham | bud | 2235 | OT + NT | [Kenneth Dotse](https://www.linkedin.com/in/kenneth-kwame-dotse/) | Assigned |
 | Bimoba | bim | 1748 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Buli | bwu | 2176 | OT + NT | [Dyllis	Ofori-Attah](https://www.linkedin.com/in/dyllis-oforiattah/) | Assigned |
+| Buli | bwu | 2176 | OT + NT | [Dyllis Ofori-Attah](https://www.linkedin.com/in/dyllis-oforiattah/) | Assigned |
 | Dagaare | dga | 4573 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
 | Dagbani | dag | 2263, 2264 | OT + NT | [Naporo Alhassan A.Ganiw](https://www.linkedin.com/in/naporo-alhassan-abdul-ganiw-986982319) | Assigned |
 | Dangme | ada | 2265 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | ✅ Done |
@@ -60,30 +60,30 @@ The table below lists all languages confirmed to have content on YouVersion and 
 | Fulfulde; Maasina | ffm | 3093 | OT + NT | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
 | Ga | gaa | 2708, 2712 | OT + NT | [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) | Assigned |
 | Gonja | gjn | 1729 | OT + NT | [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) | Assigned |
-| Hausa | hau | 71, 1614 | OT + NT | — | Not started |
-| Kasem | xsm | 3661 | OT + NT | — | Not started |
-| Konkomba | xon | 1150 | OT + NT | — | Not started |
-| Kusaal | kus | 3752 | OT + NT | — | Not started |
-| Lelemi | lef | 2442 | OT + NT | — | Not started |
-| Nzema | nzi | 2717 | OT + NT | — | Not started |
-| Sehwi | sfw | 2710 | OT + NT | — | Not started |
-| Sisaala; Tumulung | sil | 2553 | OT + NT | — | Not started |
-| Tem | kdh | 1384 | OT + NT | — | Not started |
-| Vagla | vag | 1938 | OT + NT | — | Not started |
-| Abron | abr | 3971 | NT only | — | Not started |
-| Anufo | cko | 2168 | NT only | — | Not started |
-| Anyin | any | 1731 | NT only | — | Not started |
-| Avatime | avn | 1982 | NT only | — | Not started |
-| Bimoba | bim | 1838 | NT only | — | Not started |
+| Hausa | hau | 71, 1614 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
+| Kasem | xsm | 3661 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
+| Konkomba | xon | 1150 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
+| Kusaal | kus | 3752 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
+| Lelemi | lef | 2442 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
+| Nzema | nzi | 2717 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
+| Sehwi | sfw | 2710 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
+| Sisaala; Tumulung | sil | 2553 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
+| Tem | kdh | 1384 | OT + NT | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
+| Vagla | vag | 1938 | OT + NT | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
+| Abron | abr | 3971 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
+| Anufo | cko | 2168 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
+| Anyin | any | 1731 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
+| Avatime | avn | 1982 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
+| Bimoba | bim | 1838 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
 | Birifor; Southern | biv | 2148 | NT only | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Bissa | bib | 1751 | NT only | — | Not started |
-| Chumburung | ncu | 437 | NT only | — | Not started |
-| Dagaare | dga | 2268 | NT only | — | Not started |
-| Dangme | ada | 2322 | NT only | — | Not started |
-| Fulfulde; Maasina | ffm | 1175 | NT only | — | Not started |
-| Gikyode | acd | 1741 | NT only | — | Not started |
-| Hanga | hag | 1499 | OT only | — | Not started |
-| Kabiye | kbp | 555 | NT only | — | Not started |
+| Bissa | bib | 1751 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
+| Chumburung | ncu | 437 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
+| Dagaare | dga | 2268 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
+| Dangme | ada | 2322 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
+| Fulfulde; Maasina | ffm | 1175 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
+| Gikyode | acd | 1741 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
+| Hanga | hag | 1499 | OT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
+| Kabiye | kbp | 555 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
 | Kasem | xsm | 1303 | NT only | — | Not started |
 | Konkomba | xon | 1460 | NT only | — | Not started |
 | Konni | kma | 2421 | NT only | — | Not started |
