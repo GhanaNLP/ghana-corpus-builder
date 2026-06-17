@@ -84,14 +84,14 @@ The table below lists all languages confirmed to have content on YouVersion and 
 | Gikyode | acd | 1741 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
 | Hanga | hag | 1499 | OT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
 | Kabiye | kbp | 555 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
-| Kasem | xsm | 1303 | NT only | — | Not started |
-| Konkomba | xon | 1460 | NT only | — | Not started |
-| Konni | kma | 2421 | NT only | — | Not started |
-| Mampruli | maw | 1784 | NT only | — | Not started |
-| Nawuri | naw | 1836 | NT only | — | Not started |
-| Ninkare | gur | 1323, 3194 | NT only | — | Not started |
-| Nkonya | nko | 255 | NT only | — | Not started |
-| Ntrubo | ntr | 1795 | NT only | — | Not started |
+| Kasem | xsm | 1303 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Konkomba | xon | 1460 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Konni | kma | 2421 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Mampruli | maw | 1784 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Nawuri | naw | 1836 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Ninkare | gur | 1323, 3194 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Nkonya | nko | 255 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Ntrubo | ntr | 1795 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
 | Nyangbo | nyb | 4674 | OT only | — | Not started |
 | Nzema | nzi | 4529 | NT only | — | Not started |
 | Paasaal | sig | 1978 | NT only | — | Not started |
