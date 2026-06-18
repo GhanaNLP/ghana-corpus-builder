@@ -71,10 +71,10 @@ The table below lists all languages confirmed to have content on YouVersion and 
 | Tem | kdh | 1384 | OT + NT | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
 | Vagla | vag | 1938 | OT + NT | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
 | Abron | abr | 3971 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
-| Anufo | cko | 2168 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
-| Anyin | any | 1731 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
-| Avatime | avn | 1982 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
-| Bimoba | bim | 1838 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | Assigned |
+| Anufo | cko | 2168 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
+| Anyin | any | 1731 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
+| Avatime | avn | 1982 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
+| Bimoba | bim | 1838 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
 | Birifor; Southern | biv | 2148 | NT only | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
 | Bissa | bib | 1751 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
 | Chumburung | ncu | 437 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
@@ -84,14 +84,14 @@ The table below lists all languages confirmed to have content on YouVersion and 
 | Gikyode | acd | 1741 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
 | Hanga | hag | 1499 | OT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
 | Kabiye | kbp | 555 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
-| Kasem | xsm | 1303 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
-| Konkomba | xon | 1460 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
-| Konni | kma | 2421 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
-| Mampruli | maw | 1784 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
-| Nawuri | naw | 1836 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
-| Ninkare | gur | 1323, 3194 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
-| Nkonya | nko | 255 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
-| Ntrubo | ntr | 1795 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | Assigned |
+| Kasem | xsm | 1303 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
+| Konkomba | xon | 1460 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
+| Konni | kma | 2421 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
+| Mampruli | maw | 1784 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
+| Nawuri | naw | 1836 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
+| Ninkare | gur | 1323, 3194 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
+| Nkonya | nko | 255 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
+| Ntrubo | ntr | 1795 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
 | Nyangbo | nyb | 4674 | OT only | — | Not started |
 | Nzema | nzi | 4529 | NT only | — | Not started |
 | Paasaal | sig | 1978 | NT only | — | Not started |
