@@ -180,7 +180,7 @@ versions they were built from, and the volunteers who curated them.
 | Bimoba | bim | 1748 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
 | Buli | bwu | 2176 | OT + NT | [Dyllis Ofori-Attah](https://www.linkedin.com/in/dyllis-oforiattah/) | Assigned |
 | Dagaare | dga | 4573 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Dagbani | dag | 2263, 2264 | OT + NT | [Naporo Alhassan A.Ganiw](https://www.linkedin.com/in/naporo-alhassan-abdul-ganiw-986982319) | Assigned |
+| Dagbani | dag | 2263, 2264 | OT + NT | [Naporo Alhassan A.Ganiw](https://www.linkedin.com/in/naporo-alhassan-abdul-ganiw-986982319) | ✅ Done |
 | Dangme | ada | 2265 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | ✅ Done |
 | Deg | mzw | 2012 | OT + NT | [Timothy Aguya Akasiya](https://www.linkedin.com/in/timothy-aguya-akasiya/) | Assigned |
 | Ewe | ewe | 1613, 2259, 3306 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
@@ -188,10 +188,10 @@ versions they were built from, and the volunteers who curated them.
 | Fulfulde; Maasina | ffm | 3093 | OT + NT | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
 | Ga | gaa | 2708, 2712 | OT + NT | [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) | ✅ Done |
 | Gonja | gjn | 1729 | OT + NT | [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) | ✅ Done |
-| Hausa | hau | 71, 1614 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
-| Kasem | xsm | 3661 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
-| Konkomba | xon | 1150 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
-| Kusaal | kus | 3752 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | Assigned |
+| Hausa | hau | 71, 1614 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
+| Kasem | xsm | 3661 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
+| Konkomba | xon | 1150 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
+| Kusaal | kus | 3752 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
 | Lelemi | lef | 2442 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
 | Nzema | nzi | 2717 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
 | Sehwi | sfw | 2710 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
@@ -207,7 +207,7 @@ versions they were built from, and the volunteers who curated them.
 | Bissa | bib | 1751 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
 | Chumburung | ncu | 437 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
 | Dagaare | dga | 2268 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
-| Dangme | ada | 2322 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | Assigned |
+| Dangme | ada | 2322 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
 | Fulfulde; Maasina | ffm | 1175 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
 | Gikyode | acd | 1741 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
 | Hanga | hag | 1499 | OT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
@@ -224,12 +224,12 @@ versions they were built from, and the volunteers who curated them.
 | Nzema | nzi | 4529 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
 | Paasaal | sig | 1978 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
 | Sehwi | sfw | 4630 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
-| Selee | snw | 1796, 4728 | NT / OT | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | Assigned |
-| Sekpele | lip | 1773 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | Assigned |
-| Siwu | akp | 1738 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | Assigned |
-| Tafi | tcd | 3070 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | Assigned |
-| Tampulma | tpm | 1804 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | Assigned |
-| Tuwuli | bov | 1752 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | Assigned |
+| Selee | snw | 1796, 4728 | NT / OT | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
+| Sekpele | lip | 1773 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
+| Siwu | akp | 1738 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
+| Tafi | tcd | 3070 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
+| Tampulma | tpm | 1804 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
+| Tuwuli | bov | 1752 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
 
 To volunteer for a language, open an issue or reach out to the Ghana NLP
 Community.
