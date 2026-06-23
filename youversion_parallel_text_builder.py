@@ -482,15 +482,24 @@ def process_chapter(book, chapter, version_num, abbr, csv_path,
 # PROBE TESTAMENT
 # ─────────────────────────────────────────────
 
+# Representative books probed per testament. Several are tried (not just one)
+# so a testament isn't skipped when only an unusual book is present — e.g. a
+# "NT + Psalms" edition whose ONLY Old Testament book is Psalms would be missed
+# if we probed Genesis alone.
+OT_PROBE_BOOKS = ["GEN", "PSA", "ISA", "EXO", "PRO"]
+NT_PROBE_BOOKS = ["MAT", "JHN", "ACT", "REV"]
+
+
 def probe_testament(label: str, probe_books: list, version_num: int,
                     session: requests.Session, abbr: str | None) -> bool:
-    """Return True if the version has any content in chapter 1 of the first probe book."""
-    book = probe_books[0]
-    print(f"  [{label} probe] fetching {book}.1 ...")
-    verses = get_chapter_verses(session, version_num, book, 1, abbr)
-    found  = bool(verses)
-    print(f"  [{label} probe] {'content found' if found else 'no content — skipping testament'}")
-    return found
+    """Return True if the version has content in chapter 1 of ANY probe book."""
+    for book in probe_books:
+        print(f"  [{label} probe] fetching {book}.1 ...")
+        if get_chapter_verses(session, version_num, book, 1, abbr):
+            print(f"  [{label} probe] content found in {book}")
+            return True
+    print(f"  [{label} probe] no content in any probe book — skipping testament")
+    return False
 
 
 # ─────────────────────────────────────────────
@@ -534,7 +543,7 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
             print(f"\n  OT probe cached ({'ok' if ot_ok else 'skip'}).")
         else:
             print(f"\n  Probing OT ...")
-            ot_ok = probe_testament("OT", OT_BOOKS, version_num, probe_session, abbr)
+            ot_ok = probe_testament("OT", OT_PROBE_BOOKS, version_num, probe_session, abbr)
             testament_status.setdefault(version_num, {})["ot"] = ot_ok
             save_testament_status(testament_status)
 
@@ -543,7 +552,7 @@ def build_dataset_for_bible(version_num, lang_code, lang_name, abbr,
             print(f"  NT probe cached ({'ok' if nt_ok else 'skip'}).")
         else:
             print(f"  Probing NT ...")
-            nt_ok = probe_testament("NT", NT_BOOKS, version_num, probe_session, abbr)
+            nt_ok = probe_testament("NT", NT_PROBE_BOOKS, version_num, probe_session, abbr)
             testament_status.setdefault(version_num, {})["nt"] = nt_ok
             save_testament_status(testament_status)
     finally:
