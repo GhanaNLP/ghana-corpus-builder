@@ -220,10 +220,10 @@ versions they were built from, and the volunteers who curated them.
 | Ninkare | gur | 1323, 3194 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
 | Nkonya | nko | 255 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
 | Ntrubo | ntr | 1795 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Nyangbo | nyb | 4674 | OT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
-| Nzema | nzi | 4529 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
-| Paasaal | sig | 1978 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
-| Sehwi | sfw | 4630 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | Assigned |
+| Nyangbo | nyb | 4674 | OT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
+| Nzema | nzi | 4529 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
+| Paasaal | sig | 1978 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
+| Sehwi | sfw | 4630 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
 | Selee | snw | 1796, 4728 | NT / OT | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
 | Sekpele | lip | 1773 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
 | Siwu | akp | 1738 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
