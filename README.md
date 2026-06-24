@@ -30,7 +30,7 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 
 ## Dataset statistics
 
-**38 Ghanaian languages** with data, **893,621 parallel sentence pairs** in total (English-aligned). Sentence pairs = aligned verses available before de-duplication, summed across all Bible versions of each language.
+**38 Ghanaian languages** with data, **893,621 parallel sentence pairs** in total (English-aligned). Sentence pairs = aligned verses available before de-duplication.
 
 | Language | Code | Sentence pairs |
 |---|---|--:|
