@@ -29,12 +29,13 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 
 ## Dataset statistics
 
-**38 Ghanaian languages** with data, **893,621 parallel sentence pairs** in total (English-aligned). Sentence pairs = aligned verses available before de-duplication.
+**42 Ghanaian languages** with data, **980,656 parallel sentence pairs** in total (English-aligned). Sentence pairs = aligned verses available before de-duplication.
 
 | Language | Code | Sentence pairs |
 |---|---|--:|
 | Asante Twi | twi | 92,846 |
 | Ewe | ewe | 92,544 |
+| Ga | gaa | 62,004 |
 | Fante | fat | 61,606 |
 | Dagbani | dag | 61,558 |
 | Hausa | hau | 61,548 |
@@ -43,10 +44,10 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 | Bimoba | bim | 38,180 |
 | Dangme | ada | 38,142 |
 | Konkomba | xon | 38,062 |
+| Fulfulde; Maasina | ffm | 36,012 |
 | Vagla | vag | 31,086 |
 | Kusaal | kus | 30,979 |
 | Gonja | gjn | 30,401 |
-| Fulfulde; Maasina | ffm | 28,091 |
 | Selee | snw | 25,583 |
 | Ninkare | gur | 15,862 |
 | Nkonya | nko | 10,321 |
@@ -62,15 +63,18 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 | Tafi | tcd | 7,924 |
 | Siwu | akp | 7,922 |
 | Ntrubo | ntr | 7,915 |
+| Kabiye | kbp | 7,904 |
 | Tampulma | tpm | 7,901 |
 | Anufo | cko | 7,900 |
 | Tuwuli | bov | 7,898 |
 | Mampruli | maw | 7,889 |
 | Sekpele | lip | 7,887 |
+| Gikyode | acd | 7,886 |
 | Paasaal | sig | 7,878 |
 | Chumburung | ncu | 7,670 |
 | Nzema | nzi | 5,998 |
 | Nyangbo | nyb | 1,531 |
+| Hanga | hag | 1,320 |
 
 ---
 
@@ -245,7 +249,7 @@ versions they were built from, and the volunteers who curated them.
 | Ewe | ewe | 1613, 2259, 3306 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
 | Fante | fat | 2913, 2914 | OT + NT | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
 | Fulfulde; Maasina | ffm | 3093 | OT + NT | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Ga | gaa | 2708, 2712 | OT + NT | [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) | Assigned |
+| Ga | gaa | 2708, 2712 | OT + NT | [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) | ✅ Done |
 | Gonja | gjn | 1729 | OT + NT | [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) | ✅ Done |
 | Hausa | hau | 71, 1614 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
 | Kasem | xsm | 3661 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
@@ -267,10 +271,10 @@ versions they were built from, and the volunteers who curated them.
 | Chumburung | ncu | 437 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
 | Dagaare | dga | 2268 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
 | Dangme | ada | 2322 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
-| Fulfulde; Maasina | ffm | 1175 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
-| Gikyode | acd | 1741 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
-| Hanga | hag | 1499 | OT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
-| Kabiye | kbp | 555 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | Assigned |
+| Fulfulde; Maasina | ffm | 1175 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
+| Gikyode | acd | 1741 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
+| Hanga | hag | 1499 | OT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
+| Kabiye | kbp | 555 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
 | Kasem | xsm | 1303 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
 | Konkomba | xon | 1460 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
 | Konni | kma | 2421 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
