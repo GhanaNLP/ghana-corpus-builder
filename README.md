@@ -1,11 +1,10 @@
 # Ghana Corpus Builder
 
-A toolkit and small Python library for **retrieving parallel and monolingual
-text corpora for Ghanaian languages**. Pick any Ghanaian language and pair it
-with English, with another Ghanaian language, or with one of several other
-world languages — or pull a monolingual corpus for a single language. Output is
-clean, sentence-aligned CSV, ready for machine-translation training and NLP
-research.
+A toolkit and small Python library for **retrieving monolingual and parallel
+text corpora for Ghanaian languages**. Pull a monolingual corpus for any single
+Ghanaian language, or pair one with English, with another Ghanaian language, or
+with one of several other world languages. Output is clean, sentence-aligned
+CSV, ready for machine-translation training and NLP research.
 
 The corpora are hosted on HuggingFace at
 [`ghananlpcommunity/ghana-corpus`](https://huggingface.co/datasets/ghananlpcommunity/ghana-corpus).
