@@ -30,48 +30,48 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 
 ## Dataset statistics
 
-**38 Ghanaian languages** with data, **893,621 parallel sentence pairs** in total (English-aligned). Counts are summed across all Bible versions of each language; sentence pairs = aligned verses available before de-duplication.
+**38 Ghanaian languages** with data, **893,621 parallel sentence pairs** in total (English-aligned). Sentence pairs = aligned verses available before de-duplication, summed across all Bible versions of each language.
 
-| Language | Code | Versions | Sentence pairs |
-|---|---|--:|--:|
-| Asante Twi | twi | 3 | 92,846 |
-| Ewe | ewe | 3 | 92,544 |
-| Fante | fat | 2 | 61,606 |
-| Dagbani | dag | 2 | 61,558 |
-| Hausa | hau | 2 | 61,548 |
-| Dagaare | dga | 2 | 38,948 |
-| Kasem | xsm | 2 | 38,631 |
-| Bimoba | bim | 2 | 38,180 |
-| Dangme | ada | 2 | 38,142 |
-| Konkomba | xon | 2 | 38,062 |
-| Vagla | vag | 1 | 31,086 |
-| Kusaal | kus | 1 | 30,979 |
-| Gonja | gjn | 1 | 30,401 |
-| Fulfulde; Maasina | ffm | 1 | 28,091 |
-| Selee | snw | 2 | 25,583 |
-| Ninkare | gur | 2 | 15,862 |
-| Nkonya | nko | 1 | 10,321 |
-| Tem | kdh | 1 | 9,437 |
-| Anyin | any | 1 | 7,940 |
-| Avatime | avn | 1 | 7,940 |
-| Birifor; Southern | biv | 1 | 7,940 |
-| Nawuri | naw | 1 | 7,939 |
-| Bissa | bib | 1 | 7,934 |
-| Sehwi | sfw | 1 | 7,934 |
-| Abron | abr | 1 | 7,928 |
-| Konni | kma | 1 | 7,928 |
-| Tafi | tcd | 1 | 7,924 |
-| Siwu | akp | 1 | 7,922 |
-| Ntrubo | ntr | 1 | 7,915 |
-| Tampulma | tpm | 1 | 7,901 |
-| Anufo | cko | 1 | 7,900 |
-| Tuwuli | bov | 1 | 7,898 |
-| Mampruli | maw | 1 | 7,889 |
-| Sekpele | lip | 1 | 7,887 |
-| Paasaal | sig | 1 | 7,878 |
-| Chumburung | ncu | 1 | 7,670 |
-| Nzema | nzi | 1 | 5,998 |
-| Nyangbo | nyb | 1 | 1,531 |
+| Language | Code | Sentence pairs |
+|---|---|--:|
+| Asante Twi | twi | 92,846 |
+| Ewe | ewe | 92,544 |
+| Fante | fat | 61,606 |
+| Dagbani | dag | 61,558 |
+| Hausa | hau | 61,548 |
+| Dagaare | dga | 38,948 |
+| Kasem | xsm | 38,631 |
+| Bimoba | bim | 38,180 |
+| Dangme | ada | 38,142 |
+| Konkomba | xon | 38,062 |
+| Vagla | vag | 31,086 |
+| Kusaal | kus | 30,979 |
+| Gonja | gjn | 30,401 |
+| Fulfulde; Maasina | ffm | 28,091 |
+| Selee | snw | 25,583 |
+| Ninkare | gur | 15,862 |
+| Nkonya | nko | 10,321 |
+| Tem | kdh | 9,437 |
+| Anyin | any | 7,940 |
+| Avatime | avn | 7,940 |
+| Birifor; Southern | biv | 7,940 |
+| Nawuri | naw | 7,939 |
+| Bissa | bib | 7,934 |
+| Sehwi | sfw | 7,934 |
+| Abron | abr | 7,928 |
+| Konni | kma | 7,928 |
+| Tafi | tcd | 7,924 |
+| Siwu | akp | 7,922 |
+| Ntrubo | ntr | 7,915 |
+| Tampulma | tpm | 7,901 |
+| Anufo | cko | 7,900 |
+| Tuwuli | bov | 7,898 |
+| Mampruli | maw | 7,889 |
+| Sekpele | lip | 7,887 |
+| Paasaal | sig | 7,878 |
+| Chumburung | ncu | 7,670 |
+| Nzema | nzi | 5,998 |
+| Nyangbo | nyb | 1,531 |
 
 ---
 
