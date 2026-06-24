@@ -187,6 +187,21 @@ parallel corpus:
 | `zh` | Chinese |
 | `sw` | Swahili |
 
+Each reference language has **several Bible versions**, including contemporary
+modern-language translations (e.g. English: CEB, ERV, CEV, GNT). By default all
+versions of a language are merged, so a Ghanaian verse is paired with **every**
+available rendering — many more paraphrases for training. To pin a single
+version, append `@<version_id>`:
+
+```bash
+python ghana_corpus.py --source twi --target en          # all English versions (most paraphrases)
+python ghana_corpus.py --source twi --target en@406      # only ERV (Easy-to-Read)
+python ghana_corpus.py --source twi --target fr@21       # only Bible du Semeur
+```
+
+Run `python ghana_corpus.py --list` to see every code; version ids are the
+`v{id}` in each `reference_caches/` filename.
+
 ### Adding more reference languages
 
 The reference set is fully self-describing — no index and no code changes. Each
