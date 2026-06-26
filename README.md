@@ -29,24 +29,31 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 
 ## Dataset statistics
 
-**42 Ghanaian languages** with data, **980,656 parallel sentence pairs** in total (English-aligned). Sentence pairs = aligned verses available before de-duplication.
+**47 Ghanaian languages** with data, **1,289,419 parallel sentence pairs** in total (English-aligned). Sentence pairs = aligned verses available before de-duplication.
 
 | Language | Code | Sentence pairs |
 |---|---|--:|
-| Asante Twi | twi | 92,846 |
+| Akuapem Twi / Asante Twi | twi | 185,554 |
 | Ewe | ewe | 92,544 |
 | Ga | gaa | 62,004 |
 | Fante | fat | 61,606 |
 | Dagbani | dag | 61,558 |
 | Hausa | hau | 61,548 |
+| Sehwi | sfw | 39,005 |
 | Dagaare | dga | 38,948 |
 | Kasem | xsm | 38,631 |
 | Bimoba | bim | 38,180 |
 | Dangme | ada | 38,142 |
 | Konkomba | xon | 38,062 |
+| Nzema | nzi | 36,195 |
 | Fulfulde; Maasina | ffm | 36,012 |
 | Vagla | vag | 31,086 |
+| Buli | bwu | 31,084 |
+| Deg | mzw | 31,082 |
+| Sisaala; Tumulung | sil | 31,032 |
 | Kusaal | kus | 30,979 |
+| Bassar Ntcham | bud | 30,874 |
+| Lelemi | lef | 30,715 |
 | Gonja | gjn | 30,401 |
 | Selee | snw | 25,583 |
 | Ninkare | gur | 15,862 |
@@ -57,7 +64,6 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 | Birifor; Southern | biv | 7,940 |
 | Nawuri | naw | 7,939 |
 | Bissa | bib | 7,934 |
-| Sehwi | sfw | 7,934 |
 | Abron | abr | 7,928 |
 | Konni | kma | 7,928 |
 | Tafi | tcd | 7,924 |
@@ -72,7 +78,6 @@ makes Ghanaian ↔ Ghanaian and Ghanaian ↔ other-language pairs possible.
 | Gikyode | acd | 7,886 |
 | Paasaal | sig | 7,878 |
 | Chumburung | ncu | 7,670 |
-| Nzema | nzi | 5,998 |
 | Nyangbo | nyb | 1,531 |
 | Hanga | hag | 1,320 |
 
@@ -235,64 +240,86 @@ versions they were built from, and the volunteers who curated them.
 
 # Language Assignments
 
-| Language | Code | Version IDs | Coverage | Volunteer | Status |
-|---|---|---|---|---|---|
-| Akuapem Twi | twi | 1631, 3439, 3440 | OT + NT | [Jonathan Asiamah](https://www.linkedin.com/in/jonathan-asiamah-4639a5147/) | Assigned |
-| Asante Twi | twi | 1461, 1861, 2094 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Bassar Ntcham | bud | 2235 | OT + NT | [Kenneth Dotse](https://www.linkedin.com/in/kenneth-kwame-dotse/) | Assigned |
-| Bimoba | bim | 1748 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Buli | bwu | 2176 | OT + NT | [Dyllis Ofori-Attah](https://www.linkedin.com/in/dyllis-oforiattah/) | Assigned |
-| Dagaare | dga | 4573 | OT + NT | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Dagbani | dag | 2263, 2264 | OT + NT | [Naporo Alhassan A.Ganiw](https://www.linkedin.com/in/naporo-alhassan-abdul-ganiw-986982319) | ✅ Done |
-| Dangme | ada | 2265 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | ✅ Done |
-| Deg | mzw | 2012 | OT + NT | [Timothy Aguya Akasiya](https://www.linkedin.com/in/timothy-aguya-akasiya/) | Assigned |
-| Ewe | ewe | 1613, 2259, 3306 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
-| Fante | fat | 2913, 2914 | OT + NT | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
-| Fulfulde; Maasina | ffm | 3093 | OT + NT | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Ga | gaa | 2708, 2712 | OT + NT | [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) | ✅ Done |
-| Gonja | gjn | 1729 | OT + NT | [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) | ✅ Done |
-| Hausa | hau | 71, 1614 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
-| Kasem | xsm | 3661 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
-| Konkomba | xon | 1150 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
-| Kusaal | kus | 3752 | OT + NT | [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) | ✅ Done |
-| Lelemi | lef | 2442 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
-| Nzema | nzi | 2717 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
-| Sehwi | sfw | 2710 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
-| Sisaala; Tumulung | sil | 2553 | OT + NT | [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) | Assigned |
-| Tem | kdh | 1384 | OT + NT | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
-| Vagla | vag | 1938 | OT + NT | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
-| Abron | abr | 3971 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
-| Anufo | cko | 2168 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
-| Anyin | any | 1731 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
-| Avatime | avn | 1982 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
-| Bimoba | bim | 1838 | NT only | [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) | ✅ Done |
-| Birifor; Southern | biv | 2148 | NT only | [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) | ✅ Done |
-| Bissa | bib | 1751 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
-| Chumburung | ncu | 437 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
-| Dagaare | dga | 2268 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
-| Dangme | ada | 2322 | NT only | [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) | ✅ Done |
-| Fulfulde; Maasina | ffm | 1175 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
-| Gikyode | acd | 1741 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
-| Hanga | hag | 1499 | OT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
-| Kabiye | kbp | 555 | NT only | [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) | ✅ Done |
-| Kasem | xsm | 1303 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Konkomba | xon | 1460 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Konni | kma | 2421 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Mampruli | maw | 1784 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Nawuri | naw | 1836 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Ninkare | gur | 1323, 3194 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Nkonya | nko | 255 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Ntrubo | ntr | 1795 | NT only | [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) | ✅ Done |
-| Nyangbo | nyb | 4674 | OT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
-| Nzema | nzi | 4529 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
-| Paasaal | sig | 1978 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
-| Sehwi | sfw | 4630 | NT only | [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) | ✅ Done |
-| Selee | snw | 1796, 4728 | NT / OT | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
-| Sekpele | lip | 1773 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
-| Siwu | akp | 1738 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
-| Tafi | tcd | 3070 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
-| Tampulma | tpm | 1804 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
-| Tuwuli | bov | 1752 | NT only | [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) | ✅ Done |
+| Language | Code | Version IDs | Coverage | Status |
+|---|---|---|---|---|
+| Akuapem Twi | twi | 1631, 3439, 3440 | OT + NT | ✅ Done |
+| Asante Twi | twi | 1461, 1861, 2094 | OT + NT | ✅ Done |
+| Bassar Ntcham | bud | 2235 | OT + NT | ✅ Done |
+| Bimoba | bim | 1748 | OT + NT | ✅ Done |
+| Buli | bwu | 2176 | OT + NT | ✅ Done |
+| Dagaare | dga | 4573 | OT + NT | ✅ Done |
+| Dagbani | dag | 2263, 2264 | OT + NT | ✅ Done |
+| Dangme | ada | 2265 | OT + NT | ✅ Done |
+| Deg | mzw | 2012 | OT + NT | ✅ Done |
+| Ewe | ewe | 1613, 2259, 3306 | OT + NT | ✅ Done |
+| Fante | fat | 2913, 2914 | OT + NT | ✅ Done |
+| Fulfulde; Maasina | ffm | 3093 | OT + NT | ✅ Done |
+| Ga | gaa | 2708, 2712 | OT + NT | ✅ Done |
+| Gonja | gjn | 1729 | OT + NT | ✅ Done |
+| Hausa | hau | 71, 1614 | OT + NT | ✅ Done |
+| Kasem | xsm | 3661 | OT + NT | ✅ Done |
+| Konkomba | xon | 1150 | OT + NT | ✅ Done |
+| Kusaal | kus | 3752 | OT + NT | ✅ Done |
+| Lelemi | lef | 2442 | OT + NT | ✅ Done |
+| Nzema | nzi | 2717 | OT + NT | ✅ Done |
+| Sehwi | sfw | 2710 | OT + NT | ✅ Done |
+| Sisaala; Tumulung | sil | 2553 | OT + NT | ✅ Done |
+| Tem | kdh | 1384 | OT + NT | ✅ Done |
+| Vagla | vag | 1938 | OT + NT | ✅ Done |
+| Abron | abr | 3971 | NT only | ✅ Done |
+| Anufo | cko | 2168 | NT only | ✅ Done |
+| Anyin | any | 1731 | NT only | ✅ Done |
+| Avatime | avn | 1982 | NT only | ✅ Done |
+| Bimoba | bim | 1838 | NT only | ✅ Done |
+| Birifor; Southern | biv | 2148 | NT only | ✅ Done |
+| Bissa | bib | 1751 | NT only | ✅ Done |
+| Chumburung | ncu | 437 | NT only | ✅ Done |
+| Dagaare | dga | 2268 | NT only | ✅ Done |
+| Dangme | ada | 2322 | NT only | ✅ Done |
+| Fulfulde; Maasina | ffm | 1175 | NT only | ✅ Done |
+| Gikyode | acd | 1741 | NT only | ✅ Done |
+| Hanga | hag | 1499 | OT only | ✅ Done |
+| Kabiye | kbp | 555 | NT only | ✅ Done |
+| Kasem | xsm | 1303 | NT only | ✅ Done |
+| Konkomba | xon | 1460 | NT only | ✅ Done |
+| Konni | kma | 2421 | NT only | ✅ Done |
+| Mampruli | maw | 1784 | NT only | ✅ Done |
+| Nawuri | naw | 1836 | NT only | ✅ Done |
+| Ninkare | gur | 1323, 3194 | NT only | ✅ Done |
+| Nkonya | nko | 255 | NT only | ✅ Done |
+| Ntrubo | ntr | 1795 | NT only | ✅ Done |
+| Nyangbo | nyb | 4674 | OT only | ✅ Done |
+| Nzema | nzi | 4529 | NT only | ✅ Done |
+| Paasaal | sig | 1978 | NT only | ✅ Done |
+| Sehwi | sfw | 4630 | NT only | ✅ Done |
+| Selee | snw | 1796, 4728 | NT / OT | ✅ Done |
+| Sekpele | lip | 1773 | NT only | ✅ Done |
+| Siwu | akp | 1738 | NT only | ✅ Done |
+| Tafi | tcd | 3070 | NT only | ✅ Done |
+| Tampulma | tpm | 1804 | NT only | ✅ Done |
+| Tuwuli | bov | 1752 | NT only | ✅ Done |
+
+### Contributors
+
+Thanks to the volunteers who curated these languages:
+
+- [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) — Fulfulde; Maasina, Kasem, Konkomba, Konni, Mampruli, Nawuri, Ninkare, Nkonya, Ntrubo
+- [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) — Tem, Vagla, Abron, Nyangbo, Nzema, Paasaal, Sehwi
+- [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) — Selee, Sekpele, Siwu, Tafi, Tampulma, Tuwuli
+- [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) — Ewe, Hausa, Kasem, Konkomba, Kusaal
+- [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) — Fante, Bissa, Chumburung, Dagaare, Dangme
+- [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) — Dangme, Lelemi, Nzema, Sehwi, Sisaala; Tumulung
+- [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) — Fulfulde; Maasina, Gikyode, Hanga, Kabiye
+- [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) — Anufo, Anyin, Avatime, Bimoba
+- [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) — Asante Twi, Bimoba, Dagaare, Birifor; Southern
+- [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) — Gonja
+- [Dyllis Ofori-Attah](https://www.linkedin.com/in/dyllis-oforiattah/) — Buli
+- [Jonathan Asiamah](https://www.linkedin.com/in/jonathan-asiamah-4639a5147/) — Akuapem Twi
+- [Kenneth Dotse](https://www.linkedin.com/in/kenneth-kwame-dotse/) — Bassar Ntcham
+- [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) — Ga
+- [Naporo Alhassan A.Ganiw](https://www.linkedin.com/in/naporo-alhassan-abdul-ganiw-986982319) — Dagbani
+- [Timothy Aguya Akasiya](https://www.linkedin.com/in/timothy-aguya-akasiya/) — Deg
+
 
 To volunteer for a language, open an issue or reach out to the Ghana NLP
 Community.
