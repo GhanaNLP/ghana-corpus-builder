@@ -303,21 +303,19 @@ versions they were built from, and the volunteers who curated them.
 
 Thanks to the volunteers who curated these languages:
 
+- [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) — Akuapem Twi, Asante Twi, Bimoba, Buli, Dagaare, Lelemi, Nzema, Sehwi, Sisaala; Tumulung, Birifor; Southern
 - [Saani Mustapha Deishini](https://www.linkedin.com/in/saani-mustapha-3747b925a/) — Fulfulde; Maasina, Kasem, Konkomba, Konni, Mampruli, Nawuri, Ninkare, Nkonya, Ntrubo
 - [Tyra Koranteng](https://www.linkedin.com/in/tyrakoranteng46/) — Tem, Vagla, Abron, Nyangbo, Nzema, Paasaal, Sehwi
 - [Prince Alhassan](https://www.linkedin.com/in/alhassan-prince) — Selee, Sekpele, Siwu, Tafi, Tampulma, Tuwuli
 - [Chantelle Amoako-Atta](https://www.linkedin.com/in/chantelleaa/) — Ewe, Hausa, Kasem, Konkomba, Kusaal
 - [Foster (Buabeng) Dompreh](https://www.linkedin.com/in/foster-dompreh/) — Fante, Bissa, Chumburung, Dagaare, Dangme
-- [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) — Dangme, Lelemi, Nzema, Sehwi, Sisaala; Tumulung
 - [Baffoe Nicholas](https://www.linkedin.com/in/baffoe-nicholas-3b8159267) — Fulfulde; Maasina, Gikyode, Hanga, Kabiye
 - [Isaac Donkoh](https://www.linkedin.com/in/isaac-kojo-donkoh) — Anufo, Anyin, Avatime, Bimoba
-- [Mich-Seth Owusu](https://linkedin.com/in/mich-seth-owusu) — Asante Twi, Bimoba, Dagaare, Birifor; Southern
 - [Bernard Adjei](https://www.linkedin.com/in/bernardmarfoadjei/) — Gonja
-- [Dyllis Ofori-Attah](https://www.linkedin.com/in/dyllis-oforiattah/) — Buli
-- [Jonathan Asiamah](https://www.linkedin.com/in/jonathan-asiamah-4639a5147/) — Akuapem Twi
 - [Kenneth Dotse](https://www.linkedin.com/in/kenneth-kwame-dotse/) — Bassar Ntcham
 - [Maxwell Sam](https://www.linkedin.com/in/maxwell-sam-42133044/) — Ga
 - [Naporo Alhassan A.Ganiw](https://www.linkedin.com/in/naporo-alhassan-abdul-ganiw-986982319) — Dagbani
+- [Onesimus Addo Appiah](https://www.linkedin.com/in/onesimus-appiah/) — Dangme
 - [Timothy Aguya Akasiya](https://www.linkedin.com/in/timothy-aguya-akasiya/) — Deg
 
 
