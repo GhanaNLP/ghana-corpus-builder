@@ -233,71 +233,9 @@ languages so they can be re-fetched by code; the library never reads it.)
 
 ---
 
-## Ghanaian language coverage & contributing
+## Contributing
 
-The table lists Ghanaian languages tracked by this project, the YouVersion
-versions they were built from, and the volunteers who curated them.
-
-# Language Assignments
-
-| Language | Code | Version IDs | Coverage | Status |
-|---|---|---|---|---|
-| Akuapem Twi | twi | 1631, 3439, 3440 | OT + NT | ✅ Done |
-| Asante Twi | twi | 1461, 1861, 2094 | OT + NT | ✅ Done |
-| Bassar Ntcham | bud | 2235 | OT + NT | ✅ Done |
-| Bimoba | bim | 1748 | OT + NT | ✅ Done |
-| Buli | bwu | 2176 | OT + NT | ✅ Done |
-| Dagaare | dga | 4573 | OT + NT | ✅ Done |
-| Dagbani | dag | 2263, 2264 | OT + NT | ✅ Done |
-| Dangme | ada | 2265 | OT + NT | ✅ Done |
-| Deg | mzw | 2012 | OT + NT | ✅ Done |
-| Ewe | ewe | 1613, 2259, 3306 | OT + NT | ✅ Done |
-| Fante | fat | 2913, 2914 | OT + NT | ✅ Done |
-| Fulfulde; Maasina | ffm | 3093 | OT + NT | ✅ Done |
-| Ga | gaa | 2708, 2712 | OT + NT | ✅ Done |
-| Gonja | gjn | 1729 | OT + NT | ✅ Done |
-| Hausa | hau | 71, 1614 | OT + NT | ✅ Done |
-| Kasem | xsm | 3661 | OT + NT | ✅ Done |
-| Konkomba | xon | 1150 | OT + NT | ✅ Done |
-| Kusaal | kus | 3752 | OT + NT | ✅ Done |
-| Lelemi | lef | 2442 | OT + NT | ✅ Done |
-| Nzema | nzi | 2717 | OT + NT | ✅ Done |
-| Sehwi | sfw | 2710 | OT + NT | ✅ Done |
-| Sisaala; Tumulung | sil | 2553 | OT + NT | ✅ Done |
-| Tem | kdh | 1384 | OT + NT | ✅ Done |
-| Vagla | vag | 1938 | OT + NT | ✅ Done |
-| Abron | abr | 3971 | NT only | ✅ Done |
-| Anufo | cko | 2168 | NT only | ✅ Done |
-| Anyin | any | 1731 | NT only | ✅ Done |
-| Avatime | avn | 1982 | NT only | ✅ Done |
-| Bimoba | bim | 1838 | NT only | ✅ Done |
-| Birifor; Southern | biv | 2148 | NT only | ✅ Done |
-| Bissa | bib | 1751 | NT only | ✅ Done |
-| Chumburung | ncu | 437 | NT only | ✅ Done |
-| Dagaare | dga | 2268 | NT only | ✅ Done |
-| Dangme | ada | 2322 | NT only | ✅ Done |
-| Fulfulde; Maasina | ffm | 1175 | NT only | ✅ Done |
-| Gikyode | acd | 1741 | NT only | ✅ Done |
-| Hanga | hag | 1499 | OT only | ✅ Done |
-| Kabiye | kbp | 555 | NT only | ✅ Done |
-| Kasem | xsm | 1303 | NT only | ✅ Done |
-| Konkomba | xon | 1460 | NT only | ✅ Done |
-| Konni | kma | 2421 | NT only | ✅ Done |
-| Mampruli | maw | 1784 | NT only | ✅ Done |
-| Nawuri | naw | 1836 | NT only | ✅ Done |
-| Ninkare | gur | 1323, 3194 | NT only | ✅ Done |
-| Nkonya | nko | 255 | NT only | ✅ Done |
-| Ntrubo | ntr | 1795 | NT only | ✅ Done |
-| Nyangbo | nyb | 4674 | OT only | ✅ Done |
-| Nzema | nzi | 4529 | NT only | ✅ Done |
-| Paasaal | sig | 1978 | NT only | ✅ Done |
-| Sehwi | sfw | 4630 | NT only | ✅ Done |
-| Selee | snw | 1796, 4728 | NT / OT | ✅ Done |
-| Sekpele | lip | 1773 | NT only | ✅ Done |
-| Siwu | akp | 1738 | NT only | ✅ Done |
-| Tafi | tcd | 3070 | NT only | ✅ Done |
-| Tampulma | tpm | 1804 | NT only | ✅ Done |
-| Tuwuli | bov | 1752 | NT only | ✅ Done |
+Every tracked Ghanaian language has been built — see [Dataset statistics](#dataset-statistics) above for the full list of languages and their sentence counts.
 
 ### Contributors
 
